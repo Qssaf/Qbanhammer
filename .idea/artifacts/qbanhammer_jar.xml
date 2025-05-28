@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="qbanhammer:jar">
+    <output-path>$USER_HOME$/Desktop/Mc plugin testing shi</output-path>
+    <root id="archive" name="qbanhammer.jar">
+      <element id="module-output" name="qbanhammer" />
+    </root>
+  </artifact>
+</component>

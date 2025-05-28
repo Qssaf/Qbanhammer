@@ -1,0 +1,30 @@
+# This is the main config of the Qbannhamers plugin.
+#the internet placeholders for the plugin are {attacker} {attacked}
+
+prefix: "&4[&c&lQBH&4] "
+strikemsg: "&c{attacked} has been struck by the ban hammer"
+hammers:
+  hammer1:
+    name: "Kick Hammer"
+    description: "Kicks the player from the server"
+    command: "kick {attacked}"
+    permission: "qbanhammer.kickhammer"
+
+  hammer2:
+    name: "xray hammer"
+    description: "bans the player for xray"
+    command: "ban {attacked} 30d xraying"
+    permission: "qbanhammer.xrayhammer"
+
+
+  hammer3:
+    name: "cheating hammer"
+    description: "bans the player for cheating"
+    command: "ban {attacked} 30d cheating"
+    permission: "qbanhammer.cheatinghammer"
+
+  hammer4:
+    name: "perma hammer"
+    description: "bans the player for ban evading"
+    command: "banip {attacked} Ban evading"
+    permission: "qbanhammer.permahammer"
