@@ -11,14 +11,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-import static me.Qssaf.qbanhammer.configvalues.prefix;
-import static me.Qssaf.qbanhammer.configvalues.strikemsg;
+import static me.Qssaf.qbanhammer.configvalues.*;
 
 
 public class Hitevent implements Listener {
@@ -42,9 +40,11 @@ public class Hitevent implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerHit(@NotNull PrePlayerAttackEntityEvent event) {
 
+
         Entity damaged = event.getAttacked();
 
         Player attacker = event.getPlayer();
+        ItemStack useditem = attacker.getInventory().getItemInMainHand();
 
 
 
@@ -52,181 +52,33 @@ public class Hitevent implements Listener {
         if (attacker.getInventory().getItemInMainHand().getType().isAir() || attacker.getInventory().getItemInMainHand().isEmpty()) {
             return;
         }
+        Optional<NamespacedKey> match = configvalues.hammerkeys.stream()
+                .filter(key -> useditem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.BOOLEAN))
+                .findFirst();
 
-        if (damaged instanceof Player) {
-            Location location;
-            UUID attackerId = attacker.getUniqueId();
-            UUID damagedId = damaged.getUniqueId();
 
-            if (attacker.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().has(hammerkeys.KICKHAMMER)) {
+
+
+
+        if(match.isPresent()){
+            NamespacedKey key =  match.get();
+         String usedhammer = hammerlist.get(configvalues.hammerkeys.indexOf(key));
+            if (damaged instanceof Player) {
                 event.setCancelled(true);
-                if (!attacker.hasPermission("qbanhammer.kickhammer")) {
-                    attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cYou don't have permission to use this hammer."));
-                    attacker.getInventory().setItemInMainHand(ItemStack.of(Material.AIR));
-                    return;
-                }
+                Bukkit.broadcast(msg);
+                attacker.sendMessage(usedhammer);
+                Location location = damaged.getLocation();
 
 
-                if (pendingConfirmationskick.containsKey(attackerId) && pendingConfirmationskick.get(attackerId).equals(damagedId)) {
-                    pendingConfirmationskick.remove(attackerId);
-                    pendingConfirmationstimeout.remove(attackerId);
-
-                    Bukkit.broadcast(msg);
-                    location = damaged.getLocation();
-                    if (location.getWorld() != null) {
-                        location.getWorld().strikeLightningEffect(location);
-                        for (Player player : Bukkit.getOnlinePlayers()) {
-                            player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
-                        }
-                    }
-
-                    Bukkit.getScheduler().runTaskLater(Qbanhammer.Getinstance(), () ->
-                            attacker.performCommand("kick " + damaged.getName()), 10L);
-
-                } else {
-                    pendingConfirmationskick.put(attackerId, damagedId);
-                    attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&eReady to kick " + damaged.getName() + ". Hit again within 5 seconds to confirm."));
-                    pendingConfirmationstimeout.put(attackerId, true);
-
-                    // Clear after 5 seconds
-                    Bukkit.getScheduler().runTaskLater(Qbanhammer.Getinstance(), () -> {
-                        pendingConfirmationskick.remove(attackerId);
-
-                        if (pendingConfirmationstimeout.containsKey(attackerId) && pendingConfirmationstimeout.get(attackerId).equals(true)) {
-                            pendingConfirmationstimeout.remove(attackerId);
-                            attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cKick Confirmation timed out."));
-                        }
-                    }, 100L);
 
 
-                }
 
 
-            } else if (attacker.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().has(hammerkeys.XRAYHAMMER)) {
+            } else {
+
                 event.setCancelled(true);
-                if (!attacker.hasPermission("qbanhammer.xrayhammer")) {
-                    attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cYou don't have permission to use this hammer."));
-                    attacker.getInventory().setItemInMainHand(ItemStack.of(Material.AIR));
-                    return;
-                }
-                if (pendingConfirmationsxray.containsKey(attackerId) && pendingConfirmationsxray.get(attackerId).equals(damagedId)) {
-                    pendingConfirmationsxray.remove(attackerId);
-                    pendingConfirmationstimeout.remove(attackerId);
-                    Bukkit.broadcast(msg);
-                    location = damaged.getLocation();
-                    if (location.getWorld() != null) {
-                        location.getWorld().strikeLightningEffect(location);
-                        for (Player player : Bukkit.getOnlinePlayers()) {
-                            player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
-                        }
-                    }
-
-                    Bukkit.getScheduler().runTaskLater(Qbanhammer.Getinstance(), () ->
-                            attacker.performCommand("ban " + damaged.getName() + " 30d Xraying"), 10L);
-
-                } else {
-                    pendingConfirmationsxray.put(attackerId, damagedId);
-                    attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&eReady to ban " + damaged.getName() + ". Hit again within 5 seconds to confirm."));
-                    pendingConfirmationstimeout.put(attackerId, true);
-
-                    // Clear after 5 seconds
-                    Bukkit.getScheduler().runTaskLater(Qbanhammer.Getinstance(), () -> {
-                        pendingConfirmationsxray.remove(attackerId);
-
-                        if (pendingConfirmationstimeout.containsKey(attackerId) && pendingConfirmationstimeout.get(attackerId).equals(true)) {
-                            pendingConfirmationstimeout.remove(attackerId);
-                            attacker.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + "&cXray Confirmation timed out."));
-                        }
-                    }, 100L);
-
-
-                }
-            } else if (attacker.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().has(hammerkeys.CHEATINGHAMMER)) {
-                event.setCancelled(true);
-                if (!attacker.hasPermission("qbanhammer.cheatinghammer")) {
-                    attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cYou don't have permission to use this hammer."));
-                    attacker.getInventory().setItemInMainHand(ItemStack.of(Material.AIR));
-                    return;
-                }
-                if (pendingConfirmationscheating.containsKey(attackerId) && pendingConfirmationscheating.get(attackerId).equals(damagedId)) {
-                    pendingConfirmationscheating.remove(attackerId);
-                    pendingConfirmationstimeout.remove(attackerId);
-                    Bukkit.broadcast(msg);
-                    location = damaged.getLocation();
-                    if (location.getWorld() != null) {
-                        location.getWorld().strikeLightningEffect(location);
-                        for (Player player : Bukkit.getOnlinePlayers()) {
-                            player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
-                        }
-                    }
-
-                    Bukkit.getScheduler().runTaskLater(Qbanhammer.Getinstance(), () ->
-                            attacker.performCommand("ban " + damaged.getName() + " 30d Cheating"), 10L);
-
-                } else {
-                    pendingConfirmationscheating.put(attackerId, damagedId);
-                    attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&eReady to ban " + damaged.getName() + ". Hit again within 5 seconds to confirm."));
-                    pendingConfirmationstimeout.put(attackerId, true);
-
-                    // Clear after 5 seconds
-                    Bukkit.getScheduler().runTaskLater(Qbanhammer.Getinstance(), () -> {
-                        pendingConfirmationscheating.remove(attackerId);
-
-                        if (pendingConfirmationstimeout.containsKey(attackerId) && pendingConfirmationstimeout.get(attackerId).equals(true)) {
-                            pendingConfirmationstimeout.remove(attackerId);
-                            attacker.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + "&cCheating Confirmation timed out."));
-                        }
-                    }, 100L);
-
-
-                }
-            } else if (attacker.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().has(hammerkeys.PERMAHAMMER)) {
-                event.setCancelled(true);
-                if (!attacker.hasPermission("qbanhammer.permahammer")) {
-                    attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cYou don't have permission to use this hammer."));
-                    attacker.getInventory().setItemInMainHand(ItemStack.of(Material.AIR));
-                    return;
-                }
-
-                if (pendingConfirmationsperma.containsKey(attackerId) && pendingConfirmationsperma.get(attackerId).equals(damagedId)) {
-                    pendingConfirmationsperma.remove(attackerId);
-                    pendingConfirmationstimeout.remove(attackerId);
-                    Bukkit.broadcast(msg);
-                    location = damaged.getLocation();
-                    if (location.getWorld() != null) {
-                        location.getWorld().strikeLightningEffect(location);
-                        for (Player player : Bukkit.getOnlinePlayers()) {
-                            player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
-                        }
-                    }
-
-                    Bukkit.getScheduler().runTaskLater(Qbanhammer.Getinstance(), () ->
-                            attacker.performCommand("banip " + damaged.getName() + " Ban evading."), 10L);
-
-                } else {
-                    pendingConfirmationsperma.put(attackerId, damagedId);
-                    attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&eReady to ban " + damaged.getName() + ", Hit again within 5 seconds to confirm."));
-                    pendingConfirmationstimeout.put(attackerId, true);
-
-                    // Clear after 5 seconds
-                    Bukkit.getScheduler().runTaskLater(Qbanhammer.Getinstance(), () -> {
-                        pendingConfirmationsperma.remove(attackerId);
-
-                        if (pendingConfirmationstimeout.containsKey(attackerId) && pendingConfirmationstimeout.get(attackerId).equals(true)) {
-                            pendingConfirmationstimeout.remove(attackerId);
-                            attacker.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + "&cPerma Confirmation timed out."));
-                        }
-                    }, 100L);
-
-
-                }
+                attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cYou can't ban a " + damaged.getName().toLowerCase() + "."));
             }
-
-
-        } else if (attacker.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().has(hammerkeys.KICKHAMMER) || attacker.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().has(hammerkeys.XRAYHAMMER) || attacker.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().has(hammerkeys.PERMAHAMMER) || attacker.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().has(hammerkeys.CHEATINGHAMMER)) {
-
-            event.setCancelled(true);
-            attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cYou can't ban a " + damaged.getName().toLowerCase() + "."));
         }
     }
 }

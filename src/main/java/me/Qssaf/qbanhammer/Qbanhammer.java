@@ -69,10 +69,13 @@ public final class Qbanhammer extends JavaPlugin {
         if (!configvalues.configFile.exists()) {
             getLogger().warning("config.yml not found. Restoring default config...");
             saveDefaultConfig(); // Saves the default from JAR
+            reloadConfig();
         }
-        loadhammers();
+
         configvalues.loadvalues();
 
+        loadhammers();
+        registerHammerKeys();
         getLogger().info("Plugin has loaded");
 
     }
