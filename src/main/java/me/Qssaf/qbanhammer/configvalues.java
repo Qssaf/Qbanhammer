@@ -4,6 +4,9 @@ package me.Qssaf.qbanhammer;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.PluginManager;
 
 import static me.Qssaf.qbanhammer.Qbanhammer.Getinstance;
 
@@ -43,6 +46,7 @@ public class configvalues {
 
 
     public static List<String> loadhammers(){
+
        hammersSection = Getinstance().getConfig().getConfigurationSection("hammers");
         if (hammersSection != null) {
             int hammerCount = hammersSection.getKeys(false).size();
@@ -59,7 +63,11 @@ public class configvalues {
         hammerkeys.clear();
         assert hammersSection != null;
         for(String hammer: hammersSection.getKeys(false)) {
-
+            Permission permission = new Permission("qbanhammer." + hammer, PermissionDefault.OP);
+            PluginManager e =  Qbanhammer.Getinstance().getServer().getPluginManager();
+            if(e.getPermission(permission.getName()) == null){
+                e.addPermission(permission);
+            }
             hammerkeys.add(new NamespacedKey(Qbanhammer.Getinstance(), hammer));
 
 

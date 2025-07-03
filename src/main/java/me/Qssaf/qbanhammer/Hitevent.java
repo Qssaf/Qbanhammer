@@ -96,7 +96,7 @@ public class Hitevent implements Listener {
                             pendingConfirmations.remove(key);
                             attacker.sendMessage(replaceplaceholders("&cConfirmation timed out", attacker, damaged));
                         }
-                    }, 20L * 3); // Remove after 30 seconds
+                    }, 20L * 3);
                 }
 
 
