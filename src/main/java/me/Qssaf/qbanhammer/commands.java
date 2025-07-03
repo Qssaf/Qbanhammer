@@ -71,7 +71,7 @@ public class commands implements CommandExecutor, TabExecutor {
                         if(e.getPermission(permission.getName()) == null){
                             e.addPermission(permission);
                         }
-                        player.sendMessage(text(prefix + "&aYou have received a " + Qbanhammer.Getinstance().getConfig().getString("hammers." + strings[1] + ".name") + "!"));
+                        player.sendMessage(text(prefix + "&aYou have received a " + Qbanhammer.Getinstance().getConfig().getString("hammers." + strings[1] + ".name") + "&a!"));
                         player.getInventory().addItem(hammer);
                     }
 
