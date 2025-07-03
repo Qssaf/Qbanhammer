@@ -38,29 +38,25 @@ public class configvalues {
         strikemsg = Getinstance().getConfig().getString("strikemsg");
         configFile = new File(Getinstance().getDataFolder(), "config.yml");
         prefix = Getinstance().getConfig().getString("prefix");
-        key = Getinstance().getConfig().getString("license-key");
+
     }
 
 
     public static List<String> loadhammers(){
        hammersSection = Getinstance().getConfig().getConfigurationSection("hammers");
-
         if (hammersSection != null) {
             int hammerCount = hammersSection.getKeys(false).size();
             hammerlist = hammersSection.getKeys(false).stream().toList();
-            Getinstance().getLogger().info("Number of hammers: " + hammerCount);
-            Getinstance().getLogger().info(hammerlist.toString());
+
 
             return hammerlist;
-        } else {
-            Getinstance().getLogger().warning("No hammers section found in config!");
-
         }
 
 
         return List.of();
     }
     public static void registerHammerKeys() {
+        hammerkeys.clear();
         assert hammersSection != null;
         for(String hammer: hammersSection.getKeys(false)) {
 

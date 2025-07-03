@@ -2,29 +2,33 @@
 #the internet placeholders for the plugin are {attacker} {attacked}
 
 prefix: "&4[&c&lQBH&4] "
-strikemsg: "&c{attacked} has been struck by the ban hammer."
+strikemsg: "&c{attacked} has been struck by the Ban Hammer."
 hammers:
-  "hammer1":
+  "kickhammer":
     name: "Kick Hammer"
     lore: "Kicks the player from the server"
-    command: "kicked the player"
+    command: "kick {attacked} You have been kicked by the {attacker}"
+    modeldata: 0
     permission: "qbanhammer.kickhammer"
 
-  "hammer2":
+  "xrayhammer":
     name: "xray hammer"
     lore: "bans the player for xray"
     command: "ban {attacked} 30d xraying"
+    modeldata: 0
     permission: "qbanhammer.xrayhammer"
 
 
-  "hammer3":
+  "cheatinghammer":
     name: "cheating hammer"
     lore: "bans the player for cheating"
     command: "ban {attacked} 30d cheating"
+    modeldata: 0
     permission: "qbanhammer.cheatinghammer"
 
-  "hammer4":
+  "permahammer":
     name: "perma hammer"
     lore: "bans the player for ban evading"
     command: "banip {attacked} Ban evading"
+    modeldata: 0
     permission: "qbanhammer.permahammer"

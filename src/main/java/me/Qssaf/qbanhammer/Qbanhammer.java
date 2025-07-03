@@ -60,6 +60,7 @@ public final class Qbanhammer extends JavaPlugin {
         //We return the method having disabled the plugin because it hasn't already been returned.
 
     }
+
     @Override
     public void onEnable() {
         

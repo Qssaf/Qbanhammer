@@ -1,6 +1,7 @@
 package me.Qssaf.qbanhammer;
 
 
+import com.destroystokyo.paper.event.player.PlayerAttackEntityCooldownResetEvent;
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -30,11 +31,8 @@ public class Hitevent implements Listener {
     }
 
 
-    private final Map<UUID, UUID> pendingConfirmationskick = new HashMap<>();
-    private final Map<UUID, UUID> pendingConfirmationsxray = new HashMap<>();
-    private final Map<UUID, UUID> pendingConfirmationscheating = new HashMap<>();
-    private final Map<UUID, UUID> pendingConfirmationsperma = new HashMap<>();
-    private final Map<UUID, Boolean> pendingConfirmationstimeout = new HashMap<>();
+    private final Map<NamespacedKey, UUID> pendingConfirmations = new HashMap<>();
+
 
 
     @EventHandler(priority = EventPriority.LOW)
@@ -63,12 +61,43 @@ public class Hitevent implements Listener {
         if(match.isPresent()){
             NamespacedKey key =  match.get();
          String usedhammer = hammerlist.get(configvalues.hammerkeys.indexOf(key));
+         if(!attacker.hasPermission(Objects.requireNonNull(Qbanhammer.Getinstance().getConfig().getString("hammers." + usedhammer + ".permission")))){
+             attacker.getInventory().setItemInMainHand(ItemStack.of(Material.AIR));
+             attacker.sendMessage(replaceplaceholders("&cYou do not have permission to use this hammer!", attacker, damaged));
+             event.setCancelled(true);
+             return;
+         }
             if (damaged instanceof Player) {
-                event.setCancelled(true);
-                Bukkit.broadcast(msg);
-                attacker.sendMessage(usedhammer);
-                Location location = damaged.getLocation();
 
+                UUID damagedId = damaged.getUniqueId();
+                event.setCancelled(true);
+                Location location;
+                if(pendingConfirmations.containsKey(key) && pendingConfirmations.get(key).equals(damagedId)) {
+                    pendingConfirmations.remove(key);
+                    Bukkit.broadcast(msg);
+                    location = damaged.getLocation();
+                    if (location.getWorld() != null) {
+                        location.getWorld().strikeLightningEffect(location);
+                        for (Player player : Bukkit.getOnlinePlayers()) {
+                            player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 1.0f, 1.0f);
+                        }
+                    }
+
+                    Bukkit.getScheduler().runTaskLater(Qbanhammer.Getinstance(), () ->
+                            attacker.performCommand(Objects.requireNonNull(Qbanhammer.Getinstance().getConfig().getString("hammers." + usedhammer + ".command")).replace("{attacked}", damaged.getName())
+                                    .replace("{attacker}", attacker.getName())),10L);
+
+                } else {
+                    // Add the player to the pending confirmations
+                    pendingConfirmations.put(key, damagedId);
+                    attacker.sendMessage(replaceplaceholders("&eYou are about to strike {attacked} with " + usedhammer +". Click again to confirm.", attacker, damaged));
+                    Bukkit.getScheduler().runTaskLater(Qbanhammer.Getinstance(), () -> {
+                        if(pendingConfirmations.containsKey(key) && pendingConfirmations.get(key).equals(damagedId)) {
+                            pendingConfirmations.remove(key);
+                            attacker.sendMessage(replaceplaceholders("&cConfirmation timed out", attacker, damaged));
+                        }
+                    }, 20L * 3); // Remove after 30 seconds
+                }
 
 
 

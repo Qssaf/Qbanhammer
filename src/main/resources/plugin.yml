@@ -13,25 +13,8 @@ commands:
     permission: qbanhammer.use
     permission-message: "You do not have permission to use this command"
 permissions:
-  qbanhammer.*:
-    children:
-      - qbanhammer.use
-      - qbanhammer.kickhammer
-      - qbanhammer.cheatinghammer
-      - qbanhammer.xrayhammer
-      - qbanhammer.permahammer
-    default:  op
-  qbanhammer.use:
-    description: "Allows the use of the qbanhammer command"
-    default: op
-  qbanhammer.kickhammer:
-    default: op
-  qbanhammer.cheatinghammer:
-    default: op
-  qbanhammer.xrayhammer:
-    default: op
-  qbanhammer.permahammer:
-    default: op
-  qbanhammer.reload:
-    default: op
-    description: "Allows the use of the /qbanhammer reload command"
+    qbanhammer.use:
+        description: "Allows the use of the Qbanhammer command"
+        default: op
+
+
