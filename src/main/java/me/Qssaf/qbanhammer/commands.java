@@ -83,16 +83,17 @@ public class commands implements CommandExecutor, TabExecutor {
                     commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cPlease specify a hammer name!"));
                 }
             }
-            else if(strings[0].equalsIgnoreCase("reload")){
-                Qbanhammer.Getinstance().reloadConfig();
-                configvalues.loadvalues();
-                configvalues.loadhammers();
-                configvalues.registerHammerKeys();
-                commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&aConfig reloaded successfully!"));
-            }
-            else{
-                commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cInvalid Subcommand"));
-            }
+            else if(strings[0].equalsIgnoreCase("reload")) {
+                if (commandSender.hasPermission("qbanhammer.reload")) {
+                    Qbanhammer.Getinstance().reloadConfig();
+                    configvalues.loadvalues();
+                    configvalues.loadhammers();
+                    configvalues.registerHammerKeys();
+                    commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&aConfiguration reloaded successfully!"));
+                }
+            } else {
+                    commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cInvalid Subcommand"));
+                }
 
 
 
