@@ -13,6 +13,12 @@ commands:
     permission: qbanhammer.use
     permission-message: "You do not have permission to use this command"
 permissions:
+    qbanhammer.admin:
+        description: "Allows the use of all Qbanhammer commands"
+        default: op
+        children:
+            - qbanhammer.reload
+            - qbanhammer.use
     qbanhammer.reload:
         description: "Allows the use of the Qbanhammer reload command"
         default: op

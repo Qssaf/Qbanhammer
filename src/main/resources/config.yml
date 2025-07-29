@@ -5,14 +5,14 @@ prefix: "&4[&c&lQBH&4] "
 strikemsg: "&c{attacked} has been struck by the Ban Hammer."
 hammers:
   "kickhammer":
-    name: "Kick Hammer"
+    name: "&#303030&lB&#3F3F3F&lA&#4E4E4E&lN &#6C6C6C&lH&#7B7B7B&lA&#686868&lM&#565656&lM&#434343&lE&#303030&lR &f[Kick]"
     lore: "Kicks the player from the server"
     command: "kick {attacked} You have been kicked by the {attacker}"
     modeldata: 0
     permission: "qbanhammer.kickhammer"
 
   "xrayhammer":
-    name: "xray hammer"
+    name: "&#303030&lB&#3F3F3F&lA&#4E4E4E&lN &#6C6C6C&lH&#7B7B7B&lA&#686868&lM&#565656&lM&#434343&lE&#303030&lR &f[Xray]"
     lore: "bans the player for xray"
     command: "ban {attacked} 30d xraying"
     modeldata: 0
@@ -20,14 +20,14 @@ hammers:
 
 
   "cheatinghammer":
-    name: "cheating hammer"
+    name: "&#303030&lB&#3F3F3F&lA&#4E4E4E&lN &#6C6C6C&lH&#7B7B7B&lA&#686868&lM&#565656&lM&#434343&lE&#303030&lR &f[Cheating]"
     lore: "bans the player for cheating"
     command: "ban {attacked} 30d cheating"
     modeldata: 0
     permission: "qbanhammer.cheatinghammer"
 
   "permahammer":
-    name: "perma hammer"
+    name: "&#303030&lB&#3F3F3F&lA&#4E4E4E&lN &#6C6C6C&lH&#7B7B7B&lA&#686868&lM&#565656&lM&#434343&lE&#303030&lR &f[Perma]"
     lore: "bans the player for ban evading"
     command: "banip {attacked} Ban evading"
     modeldata: 0

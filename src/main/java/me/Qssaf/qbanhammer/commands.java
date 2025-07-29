@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static me.Qssaf.qbanhammer.configvalues.*;
 
@@ -61,14 +62,15 @@ public class commands implements CommandExecutor, TabExecutor {
                         hammermeta.lore(lore);
                         hammermeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                         hammermeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                        hammermeta.setCustomModelData(Qbanhammer.Getinstance().getConfig().getInt("hammers." + strings[1] + ".custommodeldata"));
+                        hammermeta.setCustomModelData(Qbanhammer.Getinstance().getConfig().getInt("hammers." + strings[1] + ".modeldata"));
                         hammermeta.setUnbreakable(true);
                         hammermeta.addEnchant(Enchantment.UNBREAKING, 1, true);
                         hammermeta.getPersistentDataContainer().set(hammerkeys.get(hammerlist.indexOf(strings[1])), PersistentDataType.BOOLEAN, true);
                         hammer.setItemMeta(hammermeta);
-                        Permission permission = new Permission("qbanhammer." + strings[1], PermissionDefault.OP);
+                        Permission permission = new Permission(Objects.requireNonNull(Qbanhammer.Getinstance().getConfig().getString("hammers."+ strings[1] + "permission")), PermissionDefault.OP);
                        PluginManager e =  Qbanhammer.Getinstance().getServer().getPluginManager();
                         if(e.getPermission(permission.getName()) == null){
+                            permission.addParent("qbanhammer.admin", true);
                             e.addPermission(permission);
                         }
                         player.sendMessage(text(prefix + "&aYou have received a " + Qbanhammer.Getinstance().getConfig().getString("hammers." + strings[1] + ".name") + "&a!"));

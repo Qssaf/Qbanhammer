@@ -66,6 +66,7 @@ public class configvalues {
             Permission permission = new Permission("qbanhammer." + hammer, PermissionDefault.OP);
             PluginManager e =  Qbanhammer.Getinstance().getServer().getPluginManager();
             if(e.getPermission(permission.getName()) == null){
+                permission.addParent("qbanhammer.admin", true);
                 e.addPermission(permission);
             }
             hammerkeys.add(new NamespacedKey(Qbanhammer.Getinstance(), hammer));
