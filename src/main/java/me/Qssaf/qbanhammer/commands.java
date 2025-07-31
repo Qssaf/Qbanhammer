@@ -7,6 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -19,14 +20,16 @@ import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static me.Qssaf.qbanhammer.configvalues.*;
+import static me.Qssaf.qbanhammer.ConfigValues.*;
 
 public class commands implements CommandExecutor, TabExecutor {
-    Component text(String input){
+    Component text(String input) {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(input);
 
     }
@@ -34,91 +37,98 @@ public class commands implements CommandExecutor, TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+        FileConfiguration config = QBanHammer.getInstance().getConfig();
 
-
-        if(strings.length == 0){
+        if (strings.length == 0) {
             commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cPlease specify a subcommand!"));
             return true;
         }
-        if(strings.length > 2){
-            commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cInvalid Subcommand"));
+        if (strings.length > 2) {
+            commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("Invalid-Subcommand")));
             return true;
-        }
+        } else {
 
-       else {
-            if(!(commandSender instanceof Player player)){
-                commandSender.sendMessage("This command can only be run by a player");
-                return true;
-            }
-            if(strings[0].equalsIgnoreCase("gethammer")){
-                if(strings.length > 1){
-                    if(hammerlist.contains(strings[1])){
+            if (strings[0].equalsIgnoreCase("gethammer")) {
+                if (!commandSender.hasPermission("qbanhammer.gethammer")) {
+                    commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("No-Permission")));
+                    return true;
+                }
+                if (!(commandSender instanceof Player player)) {
+                    commandSender.sendMessage(text(prefix + config.getString("Console-Gethammer")));
+                    return true;
+                }
+                if (strings.length > 1) {
+                    if (hammerlist.contains(strings[1])) {
+                        if (!player.hasPermission(Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("hammers." + strings[1] + ".permission")))) {
+                            commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("Hammer-NoPermission")));
+                            return true;
+                        }
                         ItemStack hammer = new ItemStack(Material.MACE);
                         ItemMeta hammermeta = hammer.getItemMeta();
-                        hammermeta.displayName(text(Qbanhammer.Getinstance().getConfig().getString("hammers." + strings[1] + ".name")));
-                        List<Component> lore = List.of(
-                                text(Qbanhammer.Getinstance().getConfig().getString("hammers." + strings[1] + ".lore"))
-                        );
+                        hammermeta.displayName(text(QBanHammer.getInstance().getConfig().getString("hammers." + strings[1] + ".name")));
+                        List<Component> lore = new ArrayList<>();
+                        for (String line : QBanHammer.getInstance().getConfig().getStringList("hammers." + strings[1] + ".lore")) {
+                            lore.add(text(line));
+                        }
+
                         hammermeta.lore(lore);
                         hammermeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                         hammermeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                        hammermeta.setCustomModelData(Qbanhammer.Getinstance().getConfig().getInt("hammers." + strings[1] + ".modeldata"));
+                        hammermeta.setCustomModelData(QBanHammer.getInstance().getConfig().getInt("hammers." + strings[1] + ".modeldata"));
                         hammermeta.setUnbreakable(true);
                         hammermeta.addEnchant(Enchantment.UNBREAKING, 1, true);
-                        hammermeta.getPersistentDataContainer().set(hammerkeys.get(hammerlist.indexOf(strings[1])), PersistentDataType.BOOLEAN, true);
+                        hammermeta.getPersistentDataContainer().set(KEYS.get(hammerlist.indexOf(strings[1])), PersistentDataType.BOOLEAN, true);
                         hammer.setItemMeta(hammermeta);
-                        Permission permission = new Permission(Objects.requireNonNull(Qbanhammer.Getinstance().getConfig().getString("hammers."+ strings[1] + "permission")), PermissionDefault.OP);
-                       PluginManager e =  Qbanhammer.Getinstance().getServer().getPluginManager();
-                        if(e.getPermission(permission.getName()) == null){
+                        Permission permission = new Permission(Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("hammers." + strings[1] + ".permission")), PermissionDefault.OP);
+                        PluginManager e = QBanHammer.getInstance().getServer().getPluginManager();
+                        if (e.getPermission(permission.getName()) == null) {
                             permission.addParent("qbanhammer.admin", true);
                             e.addPermission(permission);
                         }
-                        player.sendMessage(text(prefix + "&aYou have received a " + Qbanhammer.Getinstance().getConfig().getString("hammers." + strings[1] + ".name") + "&a!"));
+                        player.sendMessage(text(prefix + Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("Hammer-recieved")).replace("{hammer}", Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("hammers." + strings[1] + ".name")))));
                         player.getInventory().addItem(hammer);
+                    } else {
+                        commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammer.getInstance().getConfig().getString("Invalid-Hammer")));
                     }
-
-                    else{
-                        commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cInvalid Hammer Name"));
-                    }
+                    return true;
+                } else {
+                    commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammer.getInstance().getConfig().getString("Hammer-Notspecified")));
                 }
-                else{
-                    commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cPlease specify a hammer name!"));
-                }
-            }
-            else if(strings[0].equalsIgnoreCase("reload")) {
+            }  if (strings[0].equalsIgnoreCase("reload")) {
                 if (commandSender.hasPermission("qbanhammer.reload")) {
-                    Qbanhammer.Getinstance().reloadConfig();
-                    configvalues.loadvalues();
-                    configvalues.loadhammers();
-                    configvalues.registerHammerKeys();
-                    commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&aConfiguration reloaded successfully!"));
+                    QBanHammer.getInstance().reloadConfig();
+                    ConfigValues.loadValues();
+                    ConfigValues.loadHammers();
+                    ConfigValues.registerHammerKeys();
+                    commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("Config-Reloaded")));
+                    return true;
                 }
             } else {
-                    commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cInvalid Subcommand"));
-                }
+                commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("Invalid-Subcommand")));
+                return true;
+            }
 
 
-
-    }
+        }
         return true;
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         int length = strings.length;
-        if(s.isEmpty()){
+        if (s.isEmpty()) {
             return List.of();
         }
-        if(length > 0){
-            if(length == 1){
-               return List.of("gethammer", "reload");
-            }
-            else if(length < 3 &&strings[0].equalsIgnoreCase("gethammer")){
+        if (length > 0) {
+            if (length == 1) {
+                return Stream.of("gethammer", "reload").filter(option -> option.startsWith(strings[0])).filter(option -> commandSender.hasPermission("qbanhammer."+option)).collect(Collectors.toList());
+
+
+            } else if (length < 3 && strings[0].equalsIgnoreCase("gethammer")) {
                 return hammerlist.stream()
-                        .filter(hammer -> hammer.startsWith(strings[1]))
+                        .filter(hammer -> hammer.startsWith(strings[1])).filter(hammer -> commandSender.hasPermission(Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("hammers." + hammer + ".permission"))))
                         .toList();
-            }
-            else{
+            } else {
                 return List.of();
 
             }

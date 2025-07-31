@@ -5,21 +5,24 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static me.Qssaf.qbanhammer.configvalues.*;
+import static me.Qssaf.qbanhammer.ConfigValues.*;
 
-public final class Qbanhammer extends JavaPlugin {
+public final class QBanHammer extends JavaPlugin {
+
+    public static @NotNull QBanHammer getInstance() {
+        return getPlugin(QBanHammer.class);
+    }
 
     private void isLicence() {
         //We are getting the licence key string from the config
 
-        try{
+        try {
             //We are defining the url location as a string to begin with using "/raw" after pastebin to get the raw paste.
             String url = "https://pastebin.com/raw/" + key;
 
@@ -29,15 +32,15 @@ public final class Qbanhammer extends JavaPlugin {
             openConnection.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
             //Here we are then reading from the webpage
             Scanner scan = new Scanner((new InputStreamReader(openConnection.getInputStream())));
-            while(scan.hasNextLine()){
+            while (scan.hasNextLine()) {
                 //We save the first line into a string
-                String firstline = scan.nextLine();
-                //If the firstline contains the string "true" (this is where you could put your plugin name)
-                if(firstline.contains("Qbanhammertest1")){
+                String firstLine = scan.nextLine();
+                //If the firstLine contains the string "true" (this is where you could put your plugin name)
+                if (firstLine.contains("Qbanhammertest1")) {
                     //The string customer would be "CureMe" as that is the second line of the pastebin
-                    String whitelistedip = scan.nextLine();
+                    String whitelistedIp = scan.nextLine();
 
-                    if(Objects.requireNonNull(getIP()).equals(whitelistedip)){
+                    if (Objects.requireNonNull(getIP()).equals(whitelistedIp)) {
                         //If the string customer is equal to the server ip, we can continue
 
                         getLogger().info("This ip is whitelisted.");
@@ -46,14 +49,13 @@ public final class Qbanhammer extends JavaPlugin {
                         //We return the method not having disabled the plugin
                         return;
 
-                    }
-                    else{
+                    } else {
                         getLogger().info("This server is not whitelisted.");
                         throw new Exception("This server is not whitelisted. Please contact the author of this plugin to get your server whitelisted.");
                     }
                 }
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             this.getLogger().info("This plugin was not successfully licenced. It has been disabled.");
             Bukkit.getPluginManager().disablePlugin(this);
         }
@@ -63,19 +65,19 @@ public final class Qbanhammer extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        
+
         // Plugin startup logic
-        getServer().getPluginManager().registerEvents(new Hitevent() , this);
+        getServer().getPluginManager().registerEvents(new EventManager(), this);
         Objects.requireNonNull(getCommand("qbanhammer")).setExecutor(new commands());
-        if (!configvalues.configFile.exists()) {
+        if (!ConfigValues.configFile.exists()) {
             getLogger().warning("config.yml not found. Restoring default config...");
             saveDefaultConfig(); // Saves the default from JAR
             reloadConfig();
         }
 
-        configvalues.loadvalues();
+        ConfigValues.loadValues();
 
-        loadhammers();
+        loadHammers();
         registerHammerKeys();
         getLogger().info("Plugin has loaded");
 
@@ -85,9 +87,5 @@ public final class Qbanhammer extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         getLogger().info("Plugin has shutdown");
-    }
-
-    public static @NotNull Qbanhammer Getinstance(){
-        return getPlugin(Qbanhammer.class);
     }
 }

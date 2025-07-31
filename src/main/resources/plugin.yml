@@ -1,6 +1,6 @@
 name: Qbanhammer
 version: '1.0'
-main: me.Qssaf.qbanhammer.Qbanhammer
+main: me.Qssaf.qbanhammer.QBanHammer
 api-version: '1.21'
 load: STARTUP
 authors: [ Qssaf ]
@@ -19,11 +19,14 @@ permissions:
         children:
             - qbanhammer.reload
             - qbanhammer.use
+            - qbanhammer.gethammer
     qbanhammer.reload:
         description: "Allows the use of the Qbanhammer reload command"
         default: op
     qbanhammer.use:
         description: "Allows the use of the Qbanhammer command"
         default: op
-
+    qbanhammer.gethammer:
+        description: "Allows the use of the Qbanhammer gethammer command"
+        default: op
 
