@@ -103,7 +103,7 @@ public class EventManager implements Listener {
                     Bukkit.getScheduler().runTaskLater(QBanHammer.getInstance(), () -> {
                         if (pendingConfirmations.containsKey(key) && pendingConfirmations.get(key).equals(damagedId)) {
                             pendingConfirmations.remove(key);
-                            attacker.sendMessage(replacePlaceholders(QBanHammer.getInstance().getConfig().getString("Confirmation-Timeout"), attacker, damaged));
+                            attacker.sendMessage(replacePlaceholders(Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("Confirmation-Timeout")), attacker, damaged));
                         }
                     }, 20L * 3);
                 }
