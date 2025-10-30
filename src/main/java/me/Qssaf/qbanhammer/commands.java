@@ -85,8 +85,7 @@ public class commands implements CommandExecutor, TabExecutor {
                             {
                                 hammermeta.setCustomModelData(stack.getItemStack().getItemMeta().getCustomModelData());
                             }
-                        }
-                        else{
+                        } else{
                             try {
                                 hammermeta.setCustomModelData(Integer.parseInt(modelData));
                             } catch (NumberFormatException e) {

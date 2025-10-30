@@ -54,7 +54,7 @@ public class EventManager implements Listener {
             NamespacedKey key = match.get();
             String usedHammer = hammerlist.get(ConfigValues.KEYS.indexOf(key));
 
-            if (!attacker.hasPermission(Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("hammers." + usedHammer + ".permission")))) {
+            if (!attacker.hasPermission("qbanhammer.hammers." + usedHammer)) {
                 attacker.getInventory().setItemInMainHand(ItemStack.of(Material.AIR));
                 attacker.sendMessage(replacePlaceholders(Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("Hammer-NoPermission")), attacker, damaged));
                 event.setCancelled(true);
