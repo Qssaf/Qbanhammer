@@ -19,49 +19,6 @@ public final class QBanHammer extends JavaPlugin {
         return getPlugin(QBanHammer.class);
     }
 
-    private void isLicence() {
-        //We are getting the licence key string from the config
-
-        try {
-            //We are defining the url location as a string to begin with using "/raw" after pastebin to get the raw paste.
-            String url = "https://pastebin.com/raw/" + key;
-
-            //Here we open a connection with the pastebin url
-            URLConnection openConnection = new URL(url).openConnection();
-            //We use firefox's key to access the site, this can be changed to chrome for example, but you will need to find the correct key to do so.
-            openConnection.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
-            //Here we are then reading from the webpage
-            Scanner scan = new Scanner((new InputStreamReader(openConnection.getInputStream())));
-            while (scan.hasNextLine()) {
-                //We save the first line into a string
-                String firstLine = scan.nextLine();
-                //If the firstLine contains the string "true" (this is where you could put your plugin name)
-                if (firstLine.contains("Qbanhammertest1")) {
-                    //The string customer would be "CureMe" as that is the second line of the pastebin
-                    String whitelistedIp = scan.nextLine();
-
-                    if (Objects.requireNonNull(getIP()).equals(whitelistedIp)) {
-                        //If the string customer is equal to the server ip, we can continue
-
-                        getLogger().info("This ip is whitelisted.");
-                        String customer = scan.nextLine();
-                        this.getLogger().info("This Plugin has been successfully licenced. The user who purchased this product was " + customer + ".");
-                        //We return the method not having disabled the plugin
-                        return;
-
-                    } else {
-                        getLogger().info("This server is not whitelisted.");
-                        throw new Exception("This server is not whitelisted. Please contact the author of this plugin to get your server whitelisted.");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            this.getLogger().info("This plugin was not successfully licenced. It has been disabled.");
-            Bukkit.getPluginManager().disablePlugin(this);
-        }
-        //We return the method having disabled the plugin because it hasn't already been returned.
-
-    }
 
     @Override
     public void onEnable() {

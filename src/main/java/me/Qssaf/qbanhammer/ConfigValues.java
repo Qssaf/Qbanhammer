@@ -59,7 +59,7 @@ public class ConfigValues {
         KEYS.clear();
         assert hammersSection != null;
         for (String hammer : hammersSection.getKeys(false)) {
-            Permission permission = new Permission("qbanhammer." + hammer, PermissionDefault.OP);
+            Permission permission = new Permission("qbanhammer.hammers." + hammer, PermissionDefault.OP);
             PluginManager e = QBanHammer.getInstance().getServer().getPluginManager();
             if (e.getPermission(permission.getName()) == null) {
                 permission.addParent("qbanhammer.admin", true);

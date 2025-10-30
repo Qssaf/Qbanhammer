@@ -1,5 +1,6 @@
 package me.Qssaf.qbanhammer;
 
+import dev.lone.itemsadder.api.CustomStack;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
@@ -59,7 +60,7 @@ public class commands implements CommandExecutor, TabExecutor {
                 }
                 if (strings.length > 1) {
                     if (hammerlist.contains(strings[1])) {
-                        if (!player.hasPermission(Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("hammers." + strings[1] + ".permission")))) {
+                        if (!player.hasPermission("qbanhammer.hammers." + strings[1])) {
                             commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("Hammer-NoPermission")));
                             return true;
                         }
@@ -74,17 +75,30 @@ public class commands implements CommandExecutor, TabExecutor {
                         hammermeta.lore(lore);
                         hammermeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                         hammermeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                        hammermeta.setCustomModelData(QBanHammer.getInstance().getConfig().getInt("hammers." + strings[1] + ".modeldata"));
+                        String modelData = QBanHammer.getInstance().getConfig().getString("hammers." + strings[1] + ".modeldata");
+                        assert modelData != null;
+                        if(modelData.startsWith("ia:"))
+                        {
+                            modelData = modelData.replace("ia:", "");
+                            CustomStack stack = CustomStack.getInstance(modelData);
+                            if(stack != null)
+                            {
+                                hammermeta.setCustomModelData(stack.getItemStack().getItemMeta().getCustomModelData());
+                            }
+                        }
+                        else{
+                            try {
+                                hammermeta.setCustomModelData(Integer.parseInt(modelData));
+                            } catch (NumberFormatException e) {
+                                player.sendMessage("&cInvalid model data for hammer " + strings[1]);
+                            }
+                        }
+
                         hammermeta.setUnbreakable(true);
                         hammermeta.addEnchant(Enchantment.UNBREAKING, 1, true);
                         hammermeta.getPersistentDataContainer().set(KEYS.get(hammerlist.indexOf(strings[1])), PersistentDataType.BOOLEAN, true);
                         hammer.setItemMeta(hammermeta);
-                        Permission permission = new Permission(Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("hammers." + strings[1] + ".permission")), PermissionDefault.OP);
-                        PluginManager e = QBanHammer.getInstance().getServer().getPluginManager();
-                        if (e.getPermission(permission.getName()) == null) {
-                            permission.addParent("qbanhammer.admin", true);
-                            e.addPermission(permission);
-                        }
+
                         player.sendMessage(text(prefix + Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("Hammer-recieved")).replace("{hammer}", Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("hammers." + strings[1] + ".name")))));
                         player.getInventory().addItem(hammer);
                     } else {
@@ -126,7 +140,7 @@ public class commands implements CommandExecutor, TabExecutor {
 
             } else if (length < 3 && strings[0].equalsIgnoreCase("gethammer")) {
                 return hammerlist.stream()
-                        .filter(hammer -> hammer.startsWith(strings[1])).filter(hammer -> commandSender.hasPermission(Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("hammers." + hammer + ".permission"))))
+                        .filter(hammer -> hammer.startsWith(strings[1])).filter(hammer -> commandSender.hasPermission("qbanhammer.hammers." + hammer))
                         .toList();
             } else {
                 return List.of();
