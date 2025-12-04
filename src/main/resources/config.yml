@@ -13,6 +13,16 @@ StrikeWhitelist:
   - "Player2"
 # A list of players that are whitelisted from being struck by the hammers.
 
+TimeOutDuration: 3.0
+
+# The duration in seconds before a strike confirmation times out.
+
+CrashPlayersGameOption:
+    enabled: false
+    # If true, the plugin will attempt to crash the attacked player's game client(doesn't work on bedrock players.
+    default: false
+
+
 hammers:
   "kickhammer":
     name: "&#303030&lB&#3F3F3F&lA&#4E4E4E&lN &#6C6C6C&lH&#7B7B7B&lA&#686868&lM&#565656&lM&#434343&lE&#303030&lR &f[Kick]"
@@ -23,7 +33,14 @@ hammers:
       - ""
       - "&#303030&l | &#7B7B7BLeft-Click to ban a player!"
     strike-msg: "&c{attacked} has been struck by the Ban Hammer."
+    execution-delay: 0.5 # delay in seconds before the command is executed (20 ticks = 1 second)
     command: "kick {attacked} You have been kicked by the {attacker}"
+    lightning-strike: true
+    sound:
+      enabled: true
+      sound-name: "ENTITY_WITHER_SPAWN"
+      volume: 1.0
+      pitch: 1.0
     modeldata: 0
 
   "xrayhammer":
@@ -36,6 +53,13 @@ hammers:
       - ""
       - "&#A87406&l | &#FFC343Left-Click to ban a player!"
     command: "ban {attacked} 30d xraying"
+    lightning-strike: true
+    execution-delay: 0.5
+    sound:
+      enabled: true
+      sound-name: "ENTITY_WITHER_SPAWN"
+      volume: 1.0
+      pitch: 1.0
     modeldata: 0
 
   "cheatinghammer":
@@ -47,6 +71,14 @@ hammers:
       - "&7to ban them for hacking on the server."
       - ""
       - "&#A80606&l | &#FF4343Left-Click to ban a player!"
+    lightning-strike: true
+    command: "ban {attacked} 30d cheating"
+    execution-delay: 0.5
+    sound:
+      enabled: true
+      sound-name: "ENTITY_WITHER_SPAWN"
+      volume: 1.0
+      pitch: 1.0
     modeldata: 0
 
   "permahammer":
@@ -59,6 +91,13 @@ hammers:
       - ""
       - "&#37169C&l | &#5924FFLeft-Click to ban a player!"
     command: "banip {attacked} Ban evading"
+    lightning-strike: true
+    execution-delay: 0.5
+    sound:
+        enabled: true
+        sound-name: "ENTITY_WITHER_SPAWN"
+        volume: 1.0
+        pitch: 1.0
     modeldata: 0
 
 
@@ -74,4 +113,6 @@ No-Permission: "&cYou do not have permission to use this hammer."
 Whitelisted-Player: "&c{damaged} is immune to Ban Hammers."
 Confirmation-Message: "&eYou are about to strike {attacked} with a {hammer}. Click again to confirm."
 Confirmation-Timeout: "&cConfirmation timed out."
+GamerCrasher-NoPermission: "&cYou don't have permission to toggle the Game Crasher option."
+GameCrasher-Toggled: "&eGame Crasher option has been {status}&e."
 Config-Reloaded: "&aConfiguration reloaded successfully."

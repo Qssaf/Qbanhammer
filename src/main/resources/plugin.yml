@@ -29,4 +29,6 @@ permissions:
     qbanhammer.gethammer:
         description: "Allows the use of the Qbanhammer gethammer command"
         default: op
-
+    qbanhammer.togglegamecrasher:
+        description: "Allows the use of the Qbanhammer toggle game crasher command"
+        default: op

@@ -19,13 +19,18 @@ import static me.Qssaf.qbanhammer.QBanHammer.getInstance;
 
 
 public class ConfigValues {
-    public static List<NamespacedKey> KEYS = new ArrayList<>();
-    public static List<String> hammerlist = new ArrayList<>();
-    public static ConfigurationSection hammersSection;
+    private static List<NamespacedKey> KEYS = new ArrayList<>();
+    private static List<String> hammerlist = new ArrayList<>();
+    private static ConfigurationSection hammersSection;
     public static String key = null;
     public static String prefix = getInstance().getConfig().getString("prefix");
     public static File configFile = new File(getInstance().getDataFolder(), "config.yml");
-
+    public static List<NamespacedKey> getKEYS() {
+        return KEYS;
+    }
+    public static List<String> getHammerlist(){
+        return hammerlist;
+    }
     public static String getIP() {
         try {
             return new BufferedReader(new InputStreamReader(new URL("http://checkip.amazonaws.com").openStream())).readLine();

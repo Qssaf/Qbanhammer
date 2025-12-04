@@ -14,10 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +26,7 @@ import java.util.stream.Stream;
 
 import static me.Qssaf.qbanhammer.ConfigValues.*;
 
-public class commands implements CommandExecutor, TabExecutor {
+public class Commands implements CommandExecutor, TabExecutor {
     Component text(String input) {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(input);
 
@@ -59,11 +56,12 @@ public class commands implements CommandExecutor, TabExecutor {
                     return true;
                 }
                 if (strings.length > 1) {
-                    if (hammerlist.contains(strings[1])) {
+                    if (getHammerlist().contains(strings[1])) {
                         if (!player.hasPermission("qbanhammer.hammers." + strings[1])) {
                             commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("Hammer-NoPermission")));
                             return true;
                         }
+
                         ItemStack hammer = new ItemStack(Material.MACE);
                         ItemMeta hammermeta = hammer.getItemMeta();
                         hammermeta.displayName(text(QBanHammer.getInstance().getConfig().getString("hammers." + strings[1] + ".name")));
@@ -71,7 +69,7 @@ public class commands implements CommandExecutor, TabExecutor {
                         for (String line : QBanHammer.getInstance().getConfig().getStringList("hammers." + strings[1] + ".lore")) {
                             lore.add(text(line));
                         }
-
+                        try{
                         hammermeta.lore(lore);
                         hammermeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                         hammermeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -95,11 +93,16 @@ public class commands implements CommandExecutor, TabExecutor {
 
                         hammermeta.setUnbreakable(true);
                         hammermeta.addEnchant(Enchantment.UNBREAKING, 1, true);
-                        hammermeta.getPersistentDataContainer().set(KEYS.get(hammerlist.indexOf(strings[1])), PersistentDataType.BOOLEAN, true);
+                        hammermeta.getPersistentDataContainer().set(getKEYS().get(getHammerlist().indexOf(strings[1])), PersistentDataType.BOOLEAN, true);
                         hammer.setItemMeta(hammermeta);
 
                         player.sendMessage(text(prefix + Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("Hammer-recieved")).replace("{hammer}", Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("hammers." + strings[1] + ".name")))));
                         player.getInventory().addItem(hammer);
+                        }
+                        catch (Exception e){
+                            player.sendMessage(text(prefix + "&cAn error occurred while giving you the hammer. Please recheck the configuration of the hammer.."));
+                            e.printStackTrace();
+                        }
                     } else {
                         commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammer.getInstance().getConfig().getString("Invalid-Hammer")));
                     }
@@ -138,7 +141,7 @@ public class commands implements CommandExecutor, TabExecutor {
 
 
             } else if (length < 3 && strings[0].equalsIgnoreCase("gethammer")) {
-                return hammerlist.stream()
+                return getHammerlist().stream()
                         .filter(hammer -> hammer.startsWith(strings[1])).filter(hammer -> commandSender.hasPermission("qbanhammer.hammers." + hammer))
                         .toList();
             } else {
