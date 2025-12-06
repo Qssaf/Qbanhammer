@@ -1,14 +1,16 @@
 package me.Qssaf.qbanhammer;
 
+import com.nexomc.nexo.api.NexoItems;
+import com.nexomc.nexo.items.ItemBuilder;
 import dev.lone.itemsadder.api.CustomStack;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -35,30 +37,30 @@ public class Commands implements CommandExecutor, TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        FileConfiguration config = QBanHammer.getInstance().getConfig();
+
 
         if (strings.length == 0) {
             commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cPlease specify a subcommand!"));
             return true;
         }
         if (strings.length > 2) {
-            commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("Invalid-Subcommand")));
+            commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammer.getInstance().getConfig().getString("Invalid-Subcommand")));
             return true;
         } else {
 
             if (strings[0].equalsIgnoreCase("gethammer")) {
                 if (!commandSender.hasPermission("qbanhammer.gethammer")) {
-                    commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("No-Permission")));
+                    commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammer.getInstance().getConfig().getString("No-Permission")));
                     return true;
                 }
                 if (!(commandSender instanceof Player player)) {
-                    commandSender.sendMessage(text(prefix + config.getString("Console-Gethammer")));
+                    commandSender.sendMessage(text(prefix + QBanHammer.getInstance().getConfig().getString("Console-Gethammer")));
                     return true;
                 }
                 if (strings.length > 1) {
                     if (getHammerlist().contains(strings[1])) {
                         if (!player.hasPermission("qbanhammer.hammers." + strings[1])) {
-                            commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("Hammer-NoPermission")));
+                            commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammer.getInstance().getConfig().getString("Hammer-NoPermission")));
                             return true;
                         }
 
@@ -73,8 +75,8 @@ public class Commands implements CommandExecutor, TabExecutor {
                         hammermeta.lore(lore);
                         hammermeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                         hammermeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                        String modelData = QBanHammer.getInstance().getConfig().getString("hammers." + strings[1] + ".modeldata");
-                        assert modelData != null;
+                        String modelData = QBanHammer.getInstance().getConfig().getString("hammers." + strings[1] + ".modeldata","0");
+
                         if(modelData.startsWith("ia:"))
                         {
                             modelData = modelData.replace("ia:", "");
@@ -83,11 +85,25 @@ public class Commands implements CommandExecutor, TabExecutor {
                             {
                                 hammermeta.setCustomModelData(stack.getItemStack().getItemMeta().getCustomModelData());
                             }
-                        } else{
+                            else {
+                                player.sendMessage(text(prefix + QBanHammer.getInstance().getConfig().getString("ModelData-Error","&cInvalid model data for hammer {hamer}" ).replace("{hammer}", strings[1])));
+                            }
+                        }
+                            else if (modelData.startsWith("nexo:")) {
+                                modelData = modelData.replace("nexo:", "");
+                                ItemBuilder nexoItem = NexoItems.itemFromId(modelData);
+                                if (nexoItem != null) {
+                                    hammermeta.setCustomModelData(nexoItem.build().getItemMeta().getCustomModelData());
+
+                                } else {
+                                    player.sendMessage(text(prefix + QBanHammer.getInstance().getConfig().getString("ModelData-Error","&cInvalid model data for hammer {hamer}" ).replace("{hammer}", strings[1])));
+                                }
+                            }
+                         else{
                             try {
                                 hammermeta.setCustomModelData(Integer.parseInt(modelData));
                             } catch (NumberFormatException e) {
-                                player.sendMessage("&cInvalid model data for hammer " + strings[1]);
+                                player.sendMessage(text(prefix + QBanHammer.getInstance().getConfig().getString("ModelData-Error","&cInvalid model data for hammer {hamer}" ).replace("{hammer}", strings[1])));
                             }
                         }
 
@@ -100,27 +116,37 @@ public class Commands implements CommandExecutor, TabExecutor {
                         player.getInventory().addItem(hammer);
                         }
                         catch (Exception e){
-                            player.sendMessage(text(prefix + "&cAn error occurred while giving you the hammer. Please recheck the configuration of the hammer.."));
+                            player.sendMessage(text(prefix + "&cAn error occurred while giving you the hammer. Please recheck the QBanHammer.getInstance().getConfig()uration of the hammer.."));
                             e.printStackTrace();
                         }
                     } else {
                         commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammer.getInstance().getConfig().getString("Invalid-Hammer")));
+                        return true;
                     }
                     return true;
                 } else {
                     commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammer.getInstance().getConfig().getString("Hammer-Notspecified")));
+                    return true;
                 }
             }  if (strings[0].equalsIgnoreCase("reload")) {
                 if (commandSender.hasPermission("qbanhammer.reload")) {
+                    QBanHammer.getInstance().saveDefaultConfig();
                     QBanHammer.getInstance().reloadConfig();
-                    ConfigValues.loadValues();
-                    ConfigValues.loadHammers();
-                    ConfigValues.registerHammerKeys();
-                    commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("Config-Reloaded")));
+                    QBanHammer.getInstance().getServer().getScheduler().runTaskLater(QBanHammer.getInstance(), () -> {
+                        ConfigValues.loadValues();
+                        ConfigValues.loadHammers();
+                        ConfigValues.registerHammerKeys();
+                        commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammer.getInstance().getConfig().getString("Config-Reloaded")));
+
+
+                    }, 1L);
+
+
+
                     return true;
                 }
             } else {
-                commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("Invalid-Subcommand")));
+                commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammer.getInstance().getConfig().getString("Invalid-Subcommand")));
                 return true;
             }
 

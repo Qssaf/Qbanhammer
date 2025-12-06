@@ -17,11 +17,8 @@ TimeOutDuration: 3.0
 
 # The duration in seconds before a strike confirmation times out.
 
-CrashPlayersGameOption:
-    enabled: false
-    # If true, the plugin will attempt to crash the attacked player's game client(doesn't work on bedrock players.
-    default: false
-
+GameCrasher: true
+# If true, the plugin will attempt to crash the attacked player's game client(doesn't work on bedrock players).
 
 hammers:
   "kickhammer":
@@ -38,7 +35,7 @@ hammers:
     lightning-strike: true
     sound:
       enabled: true
-      sound-name: "ENTITY_WITHER_SPAWN"
+      name: "ENTITY_WITHER_SPAWN"
       volume: 1.0
       pitch: 1.0
     modeldata: 0
@@ -108,11 +105,13 @@ Console-Gethammer: "&cThis can only be executed by players."
 Hammer-Notspecified: "&cYou must specify a hammer."
 Hammer-NoPermission: "&cYou do not have permission to use this hammer."
 Invalid-Hammer: "&cInvalid hammer."
-Hammer-recieved: "&eYou have received a {hammer} &a!."
+Hammer-recieved: "&eYou have received a {hammer}&e!."
 No-Permission: "&cYou do not have permission to use this hammer."
 Whitelisted-Player: "&c{damaged} is immune to Ban Hammers."
 Confirmation-Message: "&eYou are about to strike {attacked} with a {hammer}. Click again to confirm."
 Confirmation-Timeout: "&cConfirmation timed out."
-GamerCrasher-NoPermission: "&cYou don't have permission to toggle the Game Crasher option."
+ModelData-Error: "&cInvalid model data for {hammer}."
+GamerCrasher-NoPermission: "&cYou don't have permission use the game crasher."
 GameCrasher-Toggled: "&eGame Crasher option has been {status}&e."
+GameCrasher-Disabled: "&eGame Crasher is disabled from the config."
 Config-Reloaded: "&aConfiguration reloaded successfully."

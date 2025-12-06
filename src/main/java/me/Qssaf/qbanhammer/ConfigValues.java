@@ -19,7 +19,7 @@ import static me.Qssaf.qbanhammer.QBanHammer.getInstance;
 
 
 public class ConfigValues {
-    private static List<NamespacedKey> KEYS = new ArrayList<>();
+    private static final List<NamespacedKey> KEYS = new ArrayList<>();
     private static List<String> hammerlist = new ArrayList<>();
     private static ConfigurationSection hammersSection;
     public static String key = null;

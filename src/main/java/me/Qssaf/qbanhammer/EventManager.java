@@ -5,7 +5,6 @@ import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,7 +34,7 @@ public class EventManager implements Listener {
 
         return LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + formatted);
     }
-    FileConfiguration config = QBanHammer.getInstance().getConfig();
+
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerHit(@NotNull PrePlayerAttackEntityEvent event) {
 
@@ -82,20 +81,19 @@ public class EventManager implements Listener {
                     Bukkit.broadcast(msg);
                     location = damaged.getLocation();
 
-                        if(QBanHammer.getInstance().getConfig().getBoolean("lightning-strike", true)) {
+                        if(QBanHammer.getInstance().getConfig().getBoolean("hammers." + usedHammer + ".lightning-strike", false)) {
                             location.getWorld().strikeLightningEffect(location);
                         }
                         
-                        if(config.getBoolean("sound.enabled", false)) {
-                            String soundName = config.getString("hammers." + usedHammer + "sound.sound-name", "ENTITY_LIGHTNING_BOLT_THUNDER");
-                            float volume = (float) config.getDouble("hammers." + usedHammer + "sound.volume", 1.0);
-                            float pitch = (float) config.getDouble("hammers." + usedHammer + "sound.pitch", 1.0);
-                            Sound sound;
-                            try {
-                                sound = Sound.valueOf(soundName);
-                            } catch (IllegalArgumentException e) {
-                                sound = Sound.ENTITY_LIGHTNING_BOLT_THUNDER;
-                            }
+                        if(QBanHammer.getInstance().getConfig().getBoolean("hammers." + usedHammer + ".sound.enabled", false)) {
+                            String soundName = QBanHammer.getInstance().getConfig().getString("hammers." + usedHammer + ".sound.name", "ENTITY_LIGHTNING_BOLT_THUNDER");
+                            float volume = (float) QBanHammer.getInstance().getConfig().getDouble("hammers." + usedHammer + ".sound.volume", 1.0);
+                            float pitch = (float) QBanHammer.getInstance().getConfig().getDouble("hammers." + usedHammer + ".sound.pitch", 1.0);
+                            Sound sound = Sound.valueOf(soundName.toUpperCase());
+
+
+
+
                             for (Player player : Bukkit.getOnlinePlayers()) {
                                 player.playSound(player, sound, volume, pitch);
                                 
@@ -103,8 +101,8 @@ public class EventManager implements Listener {
                             }
 
                         }
-                    if(config.getBoolean("CrashPlayersGameOption.enabled", false))    {
-                        if(gameCrasherOption.getOrDefault(attacker.getUniqueId(), config.getBoolean("CrashPlayersGameOption.default",false)) && attacker.hasPermission("qbanhammer.togglegamecrasher")){
+                    if(QBanHammer.getInstance().getConfig().getBoolean("GameCrasher", false))    {
+                        if(gameCrasherOption.getOrDefault(attacker.getUniqueId(), false) && attacker.hasPermission("qbanhammer.togglegamecrasher")){
                             Bukkit.getScheduler().runTaskLater(QBanHammer.getInstance(), () -> ((Player) damaged).spawnParticle(Particle.FLAME, location, 2147483647, 10, 10, 10, 0, null, true),(long) (0.3*20));
                         }
                     }
@@ -120,7 +118,7 @@ public class EventManager implements Listener {
                                             .replace("{attacker}", attacker.getName()));
                                 }
                             }
-                            , (long)(config.getDouble("hammers."+ usedHammer +".execution-delay",0.5)*20));
+                            , (long)(QBanHammer.getInstance().getConfig().getDouble("hammers."+ usedHammer +".execution-delay",0.5)*20));
 
                 } else {
                     // Add the player to the pending confirmations
@@ -131,7 +129,7 @@ public class EventManager implements Listener {
                             pendingConfirmations.remove(key);
                             attacker.sendMessage(replacePlaceholders(Objects.requireNonNull(QBanHammer.getInstance().getConfig().getString("Confirmation-Timeout")), attacker, damaged));
                         }
-                    },(long) (20 * ( config.getDouble("TimeOutDuration", 3.0))) );
+                    },(long) (20 * ( QBanHammer.getInstance().getConfig().getDouble("TimeOutDuration", 3.0))) );
                 }
 
 
@@ -159,22 +157,24 @@ public class EventManager implements Listener {
         if (usedItem.getType().isAir() || usedItem.isEmpty()) {
             return;
         }
-        if(!config.getBoolean("CrashPlayersGameOption.enabled", false)){
-            player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&eGame Crasher is disabled from the config."));
-            return;
-        }
+
         Optional<NamespacedKey> match = getKEYS().stream()
                 .filter(key -> usedItem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.BOOLEAN))
                 .findFirst();
         if (match.isPresent()) {
+
             event.setCancelled(true);
             if(player.hasPermission("qbanhammer.togglegamecrasher")){
-                boolean currentSetting = gameCrasherOption.getOrDefault(player.getUniqueId(), config.getBoolean("CrashPlayersGameOption.default",false));
+                if(!(QBanHammer.getInstance().getConfig().getBoolean("GameCrasher", false))){
+                    player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammer.getInstance().getConfig().getString("GameCrasher-Disabled","&eGame Crasher is disabled from the config.")));
+                    return;
+                }
+                boolean currentSetting = gameCrasherOption.getOrDefault(player.getUniqueId(), false);
                 gameCrasherOption.put(player.getUniqueId(), !currentSetting);
                 String status = !currentSetting ? "&aenabled" : "&cdisabled";
-                player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("GameCrasher-Toggled","&eGame Crasher option has been {status}&e.").replace("{status}", status)));
+                player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammer.getInstance().getConfig().getString("GameCrasher-Toggled","&eGame Crasher option has been {status}&e.").replace("{status}", status)));
             } else {
-                player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + config.getString("GamerCrasher-NoPermission","&cYou don't have permission to toggle the Game Crasher option.")));
+                player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammer.getInstance().getConfig().getString("GamerCrasher-NoPermission","&cYou don't have permission to toggle the Game Crasher option.")));
             }
 
         }
