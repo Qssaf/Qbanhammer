@@ -1,22 +1,17 @@
 package me.Qssaf.qbanhammer;
 
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Objects;
-import java.util.Scanner;
 
 import static me.Qssaf.qbanhammer.ConfigValues.*;
 
-public final class QBanHammer extends JavaPlugin {
+public final class QBanHammers extends JavaPlugin {
 
-    public static @NotNull QBanHammer getInstance() {
-        return getPlugin(QBanHammer.class);
+    public static @NotNull QBanHammers getInstance() {
+        return getPlugin(QBanHammers.class);
     }
 
 

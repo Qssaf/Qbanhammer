@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.Qssaf.qbanhammer.QBanHammer.getInstance;
+import static me.Qssaf.qbanhammer.QBanHammers.getInstance;
 
 
 public class ConfigValues {
@@ -65,12 +65,12 @@ public class ConfigValues {
         assert hammersSection != null;
         for (String hammer : hammersSection.getKeys(false)) {
             Permission permission = new Permission("qbanhammer.hammers." + hammer, PermissionDefault.OP);
-            PluginManager e = QBanHammer.getInstance().getServer().getPluginManager();
+            PluginManager e = QBanHammers.getInstance().getServer().getPluginManager();
             if (e.getPermission(permission.getName()) == null) {
                 permission.addParent("qbanhammer.admin", true);
                 e.addPermission(permission);
             }
-            KEYS.add(new NamespacedKey(QBanHammer.getInstance(), hammer));
+            KEYS.add(new NamespacedKey(QBanHammers.getInstance(), hammer));
 
 
         }

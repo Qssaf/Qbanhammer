@@ -1,10 +1,11 @@
-name: Qbanhammer
-version: '1.0'
-main: me.Qssaf.qbanhammer.QBanHammer
+name: QBanHammers
+version: '2.4'
+main: me.Qssaf.qbanhammer.QBanHammers
 api-version: '1.21'
 load: STARTUP
 authors: [ Qssaf ]
-description: "This plugin is made to make a banhammer"
+description: "A staff utility plugin made for punishing players and more!"
+
 commands:
   qbanhammer:
     description: "This is a command"
@@ -20,6 +21,7 @@ permissions:
             - qbanhammer.reload
             - qbanhammer.use
             - qbanhammer.gethammer
+            - qbanhammer.togglegamecrasher
     qbanhammer.reload:
         description: "Allows the use of the Qbanhammer reload command"
         default: op
