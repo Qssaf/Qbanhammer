@@ -20,7 +20,7 @@ public final class QBanHammers extends JavaPlugin {
 
         // Plugin startup logic
         getServer().getPluginManager().registerEvents(new EventManager(), this);
-        Objects.requireNonNull(getCommand("qbanhammer")).setExecutor(new Commands());
+        Objects.requireNonNull(getCommand("qbanhammers")).setExecutor(new Commands());
         if (!ConfigValues.configFile.exists()) {
             getLogger().warning("config.yml not found. Restoring default config...");
             saveDefaultConfig(); // Saves the default from JAR

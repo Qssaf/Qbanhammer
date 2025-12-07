@@ -7,30 +7,30 @@ authors: [ Qssaf ]
 description: "A staff utility plugin made for punishing players and more!"
 
 commands:
-  qbanhammer:
+  qbanhammers:
     description: "This is a command"
-    usage: "/qbanhammer <arg>"
-    aliases: [bh, banhammer, qbh]
-    permission: qbanhammer.use
+    usage: "/qbanhammers <arg>"
+    aliases: [bh, banhammers, qbh]
+    permission: qbanhammers.use
     permission-message: "You do not have permission to use this command"
 permissions:
-    qbanhammer.admin:
-        description: "Allows the use of all Qbanhammer commands"
+    qbanhammers.admin:
+        description: "Allows the use of all Qbanhammers commands"
         default: op
         children:
-            - qbanhammer.reload
-            - qbanhammer.use
-            - qbanhammer.gethammer
-            - qbanhammer.togglegamecrasher
-    qbanhammer.reload:
-        description: "Allows the use of the Qbanhammer reload command"
+            - qbanhammers.reload
+            - qbanhammers.use
+            - qbanhammers.gethammer
+            - qbanhammers.togglegamecrasher
+    qbanhammers.reload:
+        description: "Allows the use of the Qbanhammers reload command"
         default: op
-    qbanhammer.use:
-        description: "Allows the use of the Qbanhammer command"
+    qbanhammers.use:
+        description: "Allows the use of the Qbanhammers command"
         default: op
-    qbanhammer.gethammer:
-        description: "Allows the use of the Qbanhammer gethammer command"
+    qbanhammers.gethammer:
+        description: "Allows the use of the Qbanhammers gethammer command"
         default: op
-    qbanhammer.togglegamecrasher:
-        description: "Allows the use of the Qbanhammer toggle game crasher command"
+    qbanhammers.togglegamecrasher:
+        description: "Allows the use of the Qbanhammers toggle game crasher option"
         default: op

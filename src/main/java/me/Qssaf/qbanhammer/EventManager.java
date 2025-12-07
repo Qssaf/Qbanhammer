@@ -58,7 +58,7 @@ public class EventManager implements Listener {
             NamespacedKey key = match.get();
             String usedHammer = getHammerlist().get(getKEYS().indexOf(key));
 
-            if (!attacker.hasPermission("qbanhammer.hammers." + usedHammer)) {
+            if (!attacker.hasPermission("qbanhammers.hammers." + usedHammer)) {
                 attacker.getInventory().setItemInMainHand(ItemStack.of(Material.AIR));
                 attacker.sendMessage(replacePlaceholders(Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("Hammer-NoPermission")), attacker, damaged));
                 event.setCancelled(true);
@@ -102,7 +102,7 @@ public class EventManager implements Listener {
 
                         }
                     if(QBanHammers.getInstance().getConfig().getBoolean("GameCrasher", false))    {
-                        if(gameCrasherOption.getOrDefault(attacker.getUniqueId(), false) && attacker.hasPermission("qbanhammer.togglegamecrasher")){
+                        if(gameCrasherOption.getOrDefault(attacker.getUniqueId(), false) && attacker.hasPermission("qbanhammers.togglegamecrasher")){
                             Bukkit.getScheduler().runTaskLater(QBanHammers.getInstance(), () -> ((Player) damaged).spawnParticle(Particle.FLAME, location, 2147483647, 10, 10, 10, 0, null, true),(long) (0.3*20));
                         }
                     }
@@ -164,7 +164,7 @@ public class EventManager implements Listener {
         if (match.isPresent()) {
 
             event.setCancelled(true);
-            if(player.hasPermission("qbanhammer.togglegamecrasher")){
+            if(player.hasPermission("qbanhammers.togglegamecrasher")){
                 if(!(QBanHammers.getInstance().getConfig().getBoolean("GameCrasher", false))){
                     player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("GameCrasher-Disabled","&eGame Crasher is disabled from the config.")));
                     return;

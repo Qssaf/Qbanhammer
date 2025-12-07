@@ -48,7 +48,7 @@ public class Commands implements CommandExecutor, TabExecutor {
         } else {
 
             if (strings[0].equalsIgnoreCase("gethammer")) {
-                if (!commandSender.hasPermission("qbanhammer.gethammer")) {
+                if (!commandSender.hasPermission("qbanhammers.gethammer")) {
                     commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("No-Permission")));
                     return true;
                 }
@@ -58,7 +58,7 @@ public class Commands implements CommandExecutor, TabExecutor {
                 }
                 if (strings.length > 1) {
                     if (getHammerlist().contains(strings[1])) {
-                        if (!player.hasPermission("qbanhammer.hammers." + strings[1])) {
+                        if (!player.hasPermission("qbanhammers.hammers." + strings[1])) {
                             commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("Hammer-NoPermission")));
                             return true;
                         }
@@ -128,7 +128,7 @@ public class Commands implements CommandExecutor, TabExecutor {
                     return true;
                 }
             }  if (strings[0].equalsIgnoreCase("reload")) {
-                if (commandSender.hasPermission("qbanhammer.reload")) {
+                if (commandSender.hasPermission("qbanhammers.reload")) {
                     QBanHammers.getInstance().saveDefaultConfig();
                     QBanHammers.getInstance().reloadConfig();
                     QBanHammers.getInstance().getServer().getScheduler().runTaskLater(QBanHammers.getInstance(), () -> {
@@ -162,12 +162,12 @@ public class Commands implements CommandExecutor, TabExecutor {
         }
         if (length > 0) {
             if (length == 1) {
-                return Stream.of("gethammer", "reload").filter(option -> option.startsWith(strings[0])).filter(option -> commandSender.hasPermission("qbanhammer."+option)).collect(Collectors.toList());
+                return Stream.of("gethammer", "reload").filter(option -> option.startsWith(strings[0])).filter(option -> commandSender.hasPermission("qbanhammers."+option)).collect(Collectors.toList());
 
 
             } else if (length < 3 && strings[0].equalsIgnoreCase("gethammer")) {
                 return getHammerlist().stream()
-                        .filter(hammer -> hammer.startsWith(strings[1])).filter(hammer -> commandSender.hasPermission("qbanhammer.hammers." + hammer))
+                        .filter(hammer -> hammer.startsWith(strings[1])).filter(hammer -> commandSender.hasPermission("qbanhammers.hammers." + hammer))
                         .toList();
             } else {
                 return List.of();
