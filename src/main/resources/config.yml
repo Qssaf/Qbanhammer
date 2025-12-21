@@ -17,6 +17,9 @@ TimeOutDuration: 3.0
 
 # The duration in seconds before a strike confirmation times out.
 
+StrikeLightningIfNoPlayer: true
+# If true, lightning will strike even if the attacked player is not found.
+
 GameCrasher: true
 # If true, the plugin will attempt to crash the attacked player's game client(doesn't work on bedrock players).
 
@@ -33,6 +36,7 @@ hammers:
     execution-delay: 0.5 # delay in seconds before the command is executed (20 ticks = 1 second)
     command: "kick {attacked} You have been kicked by the {attacker}"
     lightning-strike: true
+    fling: true
     sound:
       enabled: true
       name: "ENTITY_WITHER_SPAWN"
@@ -52,6 +56,7 @@ hammers:
     command: "ban {attacked} 30d xraying"
     lightning-strike: true
     execution-delay: 0.5
+    fling: true
     sound:
       enabled: true
       sound-name: "ENTITY_WITHER_SPAWN"
@@ -71,6 +76,7 @@ hammers:
     lightning-strike: true
     command: "ban {attacked} 30d cheating"
     execution-delay: 0.5
+    fling: true
     sound:
       enabled: true
       sound-name: "ENTITY_WITHER_SPAWN"
@@ -90,6 +96,7 @@ hammers:
     command: "banip {attacked} Ban evading"
     lightning-strike: true
     execution-delay: 0.5
+    fling: true
     sound:
         enabled: true
         sound-name: "ENTITY_WITHER_SPAWN"
@@ -107,7 +114,7 @@ Hammer-NoPermission: "&cYou do not have permission to use this hammer."
 Invalid-Hammer: "&cInvalid hammer."
 Hammer-recieved: "&eYou have received a {hammer}&e!."
 No-Permission: "&cYou do not have permission to use this hammer."
-Whitelisted-Player: "&c{damaged} is immune to Ban Hammers."
+Whitelisted-Player: "&c{attacked} is immune to Ban Hammers."
 Confirmation-Message: "&eYou are about to strike {attacked} with a {hammer}. Click again to confirm."
 Confirmation-Timeout: "&cConfirmation timed out."
 ModelData-Error: "&cInvalid model data for {hammer}."
@@ -115,3 +122,7 @@ GamerCrasher-NoPermission: "&cYou don't have permission use the game crasher."
 GameCrasher-Toggled: "&eGame Crasher option has been {status}&e."
 GameCrasher-Disabled: "&eGame Crasher is disabled from the config."
 Config-Reloaded: "&aConfiguration reloaded successfully."
+
+
+# config version, DO NOT CHANGE THIS
+ConfigVersion: 2.5

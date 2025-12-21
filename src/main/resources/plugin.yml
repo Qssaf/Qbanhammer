@@ -22,6 +22,7 @@ permissions:
             - qbanhammers.use
             - qbanhammers.gethammer
             - qbanhammers.togglegamecrasher
+            - qbanhammers.strikelightning
     qbanhammers.reload:
         description: "Allows the use of the Qbanhammers reload command"
         default: op
@@ -33,4 +34,7 @@ permissions:
         default: op
     qbanhammers.togglegamecrasher:
         description: "Allows the use of the Qbanhammers toggle game crasher option"
+        default: op
+    qbanhammers.strikelightning:
+        description: "Allows the use of lightning strikes when using hammers"
         default: op

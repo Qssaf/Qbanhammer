@@ -70,64 +70,65 @@ public class Commands implements CommandExecutor, TabExecutor {
                         for (String line : QBanHammers.getInstance().getConfig().getStringList("hammers." + strings[1] + ".lore")) {
                             lore.add(text(line));
                         }
-                        try{
-                        hammermeta.lore(lore);
-                        hammermeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                        hammermeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                        String modelData = QBanHammers.getInstance().getConfig().getString("hammers." + strings[1] + ".modeldata","0");
+                        try {
+                            hammermeta.lore(lore);
+                            hammermeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                            hammermeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                            String modelData = QBanHammers.getInstance().getConfig().getString("hammers." + strings[1] + ".modeldata", "0");
 
-                        if(modelData.startsWith("ia:"))
-                        {
-                            modelData = modelData.replace("ia:", "");
-                            CustomStack stack = CustomStack.getInstance(modelData);
-                            if(stack != null)
-                            {
-                                hammermeta.setCustomModelData(stack.getItemStack().getItemMeta().getCustomModelData());
-                            }
-                            else {
-                                player.sendMessage(text(prefix + QBanHammers.getInstance().getConfig().getString("ModelData-Error","&cInvalid model data for hammer {hamer}" ).replace("{hammer}", strings[1])));
-                            }
-                        }
-                            else if (modelData.startsWith("nexo:")) {
+                            if (modelData.startsWith("ia:")) {
+                                modelData = modelData.replace("ia:", "");
+                                CustomStack stack = CustomStack.getInstance(modelData);
+                                if (stack != null) {
+                                    hammermeta.setCustomModelData(stack.getItemStack().getItemMeta().getCustomModelData());
+                                    hammer = stack.getItemStack();
+                                } else {
+                                    player.sendMessage(text(prefix + QBanHammers.getInstance().getConfig().getString("ModelData-Error", "&cInvalid model data for hammer {hamer}").replace("{hammer}", strings[1])));
+                                }
+                            } else if (modelData.startsWith("nexo:")) {
                                 modelData = modelData.replace("nexo:", "");
                                 ItemBuilder nexoItem = NexoItems.itemFromId(modelData);
                                 if (nexoItem != null) {
                                     hammermeta.setCustomModelData(nexoItem.build().getItemMeta().getCustomModelData());
+                                    hammer = nexoItem.build();
 
                                 } else {
-                                    player.sendMessage(text(prefix + QBanHammers.getInstance().getConfig().getString("ModelData-Error","&cInvalid model data for hammer {hamer}" ).replace("{hammer}", strings[1])));
+                                    player.sendMessage(text(prefix + QBanHammers.getInstance().getConfig().getString("ModelData-Error", "&cInvalid model data for hammer {hamer}").replace("{hammer}", strings[1])));
+                                    return true;
+                                }
+                            } else {
+                                try {
+                                    hammermeta.setCustomModelData(Integer.parseInt(modelData));
+                                } catch (NumberFormatException e) {
+                                    player.sendMessage(text(prefix + QBanHammers.getInstance().getConfig().getString("ModelData-Error", "&cInvalid model data for hammer {hamer}").replace("{hammer}", strings[1])));
+                                    return true;
                                 }
                             }
-                         else{
-                            try {
-                                hammermeta.setCustomModelData(Integer.parseInt(modelData));
-                            } catch (NumberFormatException e) {
-                                player.sendMessage(text(prefix + QBanHammers.getInstance().getConfig().getString("ModelData-Error","&cInvalid model data for hammer {hamer}" ).replace("{hammer}", strings[1])));
-                            }
-                        }
 
-                        hammermeta.setUnbreakable(true);
-                        hammermeta.addEnchant(Enchantment.UNBREAKING, 1, true);
-                        hammermeta.getPersistentDataContainer().set(getKEYS().get(getHammerlist().indexOf(strings[1])), PersistentDataType.BOOLEAN, true);
-                        hammer.setItemMeta(hammermeta);
+                            hammermeta.setUnbreakable(true);
+                            hammermeta.addEnchant(Enchantment.UNBREAKING, 1, true);
+                            hammermeta.getPersistentDataContainer().set(getKEYS().get(getHammerlist().indexOf(strings[1])), PersistentDataType.BOOLEAN, true);
+                            hammer.setItemMeta(hammermeta);
 
-                        player.sendMessage(text(prefix + Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("Hammer-recieved")).replace("{hammer}", Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("hammers." + strings[1] + ".name")))));
-                        player.getInventory().addItem(hammer);
-                        }
-                        catch (Exception e){
+                            player.sendMessage(text(prefix + Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("Hammer-recieved")).replace("{hammer}", Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("hammers." + strings[1] + ".name")))));
+                            player.getInventory().addItem(hammer);
+                            return true;
+                        } catch (Exception e) {
                             player.sendMessage(text(prefix + "&cAn error occurred while giving you the hammer. Please recheck the QBanHammer.getInstance().getConfig()uration of the hammer.."));
+                            //noinspection CallToPrintStackTrace
                             e.printStackTrace();
+                            return true;
                         }
                     } else {
                         commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("Invalid-Hammer")));
                         return true;
                     }
-                    return true;
                 } else {
                     commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("Hammer-Notspecified")));
                     return true;
                 }
-            }  if (strings[0].equalsIgnoreCase("reload")) {
+
+            } else if (strings[0].equalsIgnoreCase("reload")) {
                 if (commandSender.hasPermission("qbanhammers.reload")) {
                     QBanHammers.getInstance().saveDefaultConfig();
                     QBanHammers.getInstance().reloadConfig();
@@ -139,7 +140,6 @@ public class Commands implements CommandExecutor, TabExecutor {
 
 
                     }, 1L);
-
 
 
                     return true;
@@ -157,12 +157,9 @@ public class Commands implements CommandExecutor, TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         int length = strings.length;
-        if (s.isEmpty()) {
-            return List.of();
-        }
-        if (length > 0) {
+
             if (length == 1) {
-                return Stream.of("gethammer", "reload").filter(option -> option.startsWith(strings[0])).filter(option -> commandSender.hasPermission("qbanhammers."+option)).collect(Collectors.toList());
+                return Stream.of("gethammer", "reload").filter(option -> option.startsWith(strings[0])).filter(option -> commandSender.hasPermission("qbanhammers." + option)).collect(Collectors.toList());
 
 
             } else if (length < 3 && strings[0].equalsIgnoreCase("gethammer")) {
@@ -173,8 +170,8 @@ public class Commands implements CommandExecutor, TabExecutor {
                 return List.of();
 
             }
-        }
 
-        return List.of();
+
+
     }
 }
