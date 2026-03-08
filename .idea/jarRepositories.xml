@@ -41,5 +41,10 @@
       <option name="name" value="matteodev" />
       <option name="url" value="https://maven.devs.beer/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="triumphteam-repo" />
+      <option name="name" value="triumphteam-repo" />
+      <option name="url" value="https://repo.triumphteam.dev/snapshots" />
+    </remote-repository>
   </component>
 </project>

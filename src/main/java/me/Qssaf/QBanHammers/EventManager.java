@@ -1,4 +1,4 @@
-package me.Qssaf.qbanhammer;
+package me.Qssaf.QBanHammers;
 
 
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
@@ -19,9 +19,10 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 
-import static me.Qssaf.qbanhammer.ConfigValues.*;
+import static me.Qssaf.QBanHammers.ConfigValues.prefix;
 
 
+@SuppressWarnings("UnnecessaryReturnStatement")
 public class EventManager implements Listener {
     private final Set<UUID> attackedRecently = new HashSet<>();
 
@@ -49,14 +50,14 @@ public class EventManager implements Listener {
         if (attacker.getInventory().getItemInMainHand().getType().isAir() || attacker.getInventory().getItemInMainHand().isEmpty()) {
             return;
         }
-        Optional<NamespacedKey> match = getKEYS().stream()
-                .filter(key -> usedItem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.BOOLEAN))
+        Optional<Hammer> match = Hammer.getHammerList().stream()
+                .filter(hammer -> usedItem.getItemMeta().getPersistentDataContainer().has(hammer.getHammerKey(), PersistentDataType.BOOLEAN))
                 .findFirst();
 
 
         if (match.isPresent()) {
-            NamespacedKey key = match.get();
-            String usedHammer = getHammerlist().get(getKEYS().indexOf(key));
+            NamespacedKey key = match.get().getHammerKey();
+            String usedHammer = match.get().getHammerName();
 
             if (!attacker.hasPermission("qbanhammers.hammers." + usedHammer)) {
                 attacker.getInventory().setItemInMainHand(ItemStack.of(Material.AIR));
@@ -167,8 +168,8 @@ public class EventManager implements Listener {
             return;
         }
 
-        Optional<NamespacedKey> match = getKEYS().stream()
-                .filter(key -> usedItem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.BOOLEAN))
+        Optional<Hammer> match = Hammer.getHammerList().stream()
+                .filter(hammer -> usedItem.getItemMeta().getPersistentDataContainer().has(hammer.getHammerKey(), PersistentDataType.BOOLEAN))
                 .findFirst();
         if (match.isPresent()) {
 
@@ -191,25 +192,29 @@ public class EventManager implements Listener {
     }
 
     @EventHandler
-    public void StrikeLightningWhenLeftClick(PlayerInteractEvent event) {
-
-        if (!QBanHammers.getInstance().getConfig().getBoolean("StrikeLightningIfNoPlayer", true)) {
+    public void strikeLightningWhenLeftClick(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        ItemStack usedItem = player.getInventory().getItemInMainHand();
+        if (usedItem.getType().isAir() || usedItem.isEmpty()) {
             return;
         }
         if (!event.getPlayer().hasPermission("qbanhammers.strikelightning")) {
             return;
         }
-        Player player = event.getPlayer();
+
+        if (!QBanHammers.getInstance().getConfig().getBoolean("StrikeLightningIfNoPlayer", true)) {
+            return;
+        }
+
+
         if (event.getAction() != Action.LEFT_CLICK_AIR &&
                 event.getAction() != Action.LEFT_CLICK_BLOCK) {
             return;
         }
-        ItemStack usedItem = player.getInventory().getItemInMainHand();
-        if (usedItem.getType().isAir() || usedItem.isEmpty()) {
-            return;
-        }
-        Optional<NamespacedKey> match = getKEYS().stream()
-                .filter(key -> usedItem.getItemMeta().getPersistentDataContainer().has(key, PersistentDataType.BOOLEAN))
+
+
+        Optional<Hammer> match = Hammer.getHammerList().stream()
+                .filter(hammer -> usedItem.getItemMeta().getPersistentDataContainer().has(hammer.getHammerKey(), PersistentDataType.BOOLEAN))
                 .findFirst();
         if (match.isPresent()) {
 
@@ -217,39 +222,38 @@ public class EventManager implements Listener {
 
             Block block = player.getTargetBlockExact(100);
 
-            Entity TargetEntity = player.getTargetEntity(100);
-            if (block == null && TargetEntity == null) {
+            Entity targetEntity = player.getTargetEntity(100);
+            if (block == null && targetEntity == null) {
                 return;
-            }
-            if (TargetEntity == null) {
+            } else if (block != null && targetEntity != null) {
                 Location blocklocation = block.getLocation();
-                blocklocation.add(0.5, 1, 0.5);
-                blocklocation.getWorld().strikeLightningEffect(blocklocation);
-                return;
-            }
-            if (block == null) {
-                Location entitylocation = TargetEntity.getLocation();
+                Location entitylocation = targetEntity.getLocation();
+                double blockDist = blocklocation.distance(player.getLocation());
+                double entityDist = entitylocation.distance(player.getLocation());
+                if (blockDist < entityDist) {
 
-                entitylocation.getWorld().strikeLightningEffect(entitylocation.add(0, -1, 0));
-                return;
-            }
-            Location blocklocation = block.getLocation();
-            Location entitylocation = TargetEntity.getLocation();
-            double blockDist = blocklocation.distance(player.getLocation());
-            double entityDist = entitylocation.distance(player.getLocation());
-            if (entitylocation.distance(player.getLocation()) < 5) {
-                return;
-            }
-            if (blockDist < entityDist) {
+                    blocklocation.add(0.5, 1, 0.5);
+                    blocklocation.getWorld().strikeLightningEffect(blocklocation);
+                    return;
+                }
+                if (entitylocation.distance(player.getLocation()) < 5) {
+                    return;
+                } else {
+                    entitylocation.getWorld().strikeLightningEffect(entitylocation.add(0, -1, 0));
 
+                }
+
+            } else if (targetEntity == null) {
+                Location blocklocation = block.getLocation();
                 blocklocation.add(0.5, 1, 0.5);
                 blocklocation.getWorld().strikeLightningEffect(blocklocation);
 
             } else {
+                Location entitylocation = targetEntity.getLocation();
+
                 entitylocation.getWorld().strikeLightningEffect(entitylocation.add(0, -1, 0));
 
             }
-
 
         }
     }

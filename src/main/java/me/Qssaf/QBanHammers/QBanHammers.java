@@ -1,4 +1,4 @@
-package me.Qssaf.qbanhammer;
+package me.Qssaf.QBanHammers;
 
 
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.Objects;
 
-import static me.Qssaf.qbanhammer.ConfigValues.loadHammers;
-import static me.Qssaf.qbanhammer.ConfigValues.registerHammerKeys;
+import static me.Qssaf.QBanHammers.ConfigValues.loadHammers;
+
 
 public final class QBanHammers extends JavaPlugin {
 
@@ -47,8 +47,8 @@ public final class QBanHammers extends JavaPlugin {
         reloadConfig();
         ConfigValues.loadValues();
         loadHammers();
-        registerHammerKeys();
-        getLogger().info("Plugin has loaded");
+
+        getLogger().info("Plugin has been enabled");
 
 
     }

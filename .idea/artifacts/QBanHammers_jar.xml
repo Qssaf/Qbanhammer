@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="QBanHammers:jar">
-    <output-path>$USER_HOME$/Desktop/Mc plugin testing shi</output-path>
-    <root id="archive" name="QBanHammers.jar">
-      <element id="module-output" name="qbanhammer" />
-    </root>
-  </artifact>
-</component>

@@ -6,7 +6,7 @@
 prefix: "&4[&c&lQBH&4] "
 # The prefix of the plugin, used in messages.
 ExecuteWithConsole: false
-# If true, the plugin will execute strike with the console instead of the player.
+# If true, the plugin will execute the hammer command with the console instead of the player.
 
 StrikeWhitelist:
   - "Player1"
@@ -21,7 +21,7 @@ StrikeLightningIfNoPlayer: true
 # If true, lightning will strike even if the attacked player is not found.
 
 GameCrasher: true
-# If true, the plugin will attempt to crash the attacked player's game client(doesn't work on bedrock players).
+# If true, the plugin will crash the attacked player's game client(doesn't work on bedrock players).
 
 hammers:
   "kickhammer":
@@ -32,7 +32,6 @@ hammers:
       - "&7to kick them from the server."
       - ""
       - "&#303030&l | &#7B7B7BLeft-Click to ban a player!"
-    strike-msg: "&c{attacked} has been struck by the Ban Hammer."
     execution-delay: 0.5 # delay in seconds before the command is executed (20 ticks = 1 second)
     command: "kick {attacked} You have been kicked by the {attacker}"
     lightning-strike: true
@@ -42,10 +41,10 @@ hammers:
       name: "ENTITY_WITHER_SPAWN"
       volume: 1.0
       pitch: 1.0
-    modeldata: 0
+    model-data: 0
+    strike-msg: "&c{attacked} has been struck by the Ban Hammer."
 
   "xrayhammer":
-    strike-msg: "&c{attacked} has been struck by the Ban Hammer."
     name: "&#A87406&lB&#B98412&lA&#CB941E&lN &#EEB337&lH&#FFC343&lA&#E9AF34&lM&#D49C25&lM&#BE8815&lE&#A87406&lR &f[XRAY]"
     lore:
       - "&f"
@@ -62,10 +61,10 @@ hammers:
       sound-name: "ENTITY_WITHER_SPAWN"
       volume: 1.0
       pitch: 1.0
-    modeldata: 0
+    model-data: 0
+    strike-msg: "&c{attacked} has been struck by the Ban Hammer."
 
   "cheatinghammer":
-    strike-msg: "&c{attacked} has been struck by the Ban Hammer."
     name: "&#A80606&lB&#B91212&lA&#CB1E1E&lN &#EE3737&lH&#FF4343&lA&#E93434&lM&#D42525&lM&#BE1515&lE&#A80606&lR &f[Cheaters]"
     lore:
       - "&f"
@@ -82,10 +81,10 @@ hammers:
       sound-name: "ENTITY_WITHER_SPAWN"
       volume: 1.0
       pitch: 1.0
-    modeldata: 0
+    model-data: 0
+    strike-msg: "&c{attacked} has been struck by the Ban Hammer."
 
   "permahammer":
-    strike-msg: "&c{attacked} has been struck by the Ban Hammer."
     name: "&#37169C&lB&#3E19B0&lA&#451CC4&lN &#5221EB&lH&#5924FF&lA&#5121E6&lM&#481DCE&lM&#401AB5&lE&#37169C&lR &f[Perma]"
     lore:
       - "&f"
@@ -103,6 +102,7 @@ hammers:
         volume: 1.0
         pitch: 1.0
     modeldata: 0
+    strike-msg: "&c{attacked} has been struck by the Ban Hammer."
 
 
 # messages
@@ -114,7 +114,7 @@ Hammer-NoPermission: "&cYou do not have permission to use this hammer."
 Invalid-Hammer: "&cInvalid hammer."
 Hammer-recieved: "&eYou have received a {hammer}&e!."
 No-Permission: "&cYou do not have permission to use this hammer."
-Whitelisted-Player: "&c{attacked} is immune to Ban Hammers."
+Whitelisted-Player: "&c{attacked} is immune to ban hammers."
 Confirmation-Message: "&eYou are about to strike {attacked} with a {hammer}. Click again to confirm."
 Confirmation-Timeout: "&cConfirmation timed out."
 ModelData-Error: "&cInvalid model data for {hammer}."
@@ -125,4 +125,4 @@ Config-Reloaded: "&aConfiguration reloaded successfully."
 
 
 # config version, DO NOT CHANGE THIS
-ConfigVersion: 2.5
+ConfigVersion: 2.6
