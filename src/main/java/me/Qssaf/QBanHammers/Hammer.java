@@ -18,8 +18,8 @@ import org.bukkit.plugin.PluginManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.Qssaf.QBanHammers.ConfigValues.prefix;
-import static me.Qssaf.QBanHammers.ConfigValues.text;
+import static me.Qssaf.QBanHammers.ConfigManager.prefix;
+import static me.Qssaf.QBanHammers.ConfigManager.text;
 
 public class Hammer {
     private static final List<Hammer> hammerList = new ArrayList<>();

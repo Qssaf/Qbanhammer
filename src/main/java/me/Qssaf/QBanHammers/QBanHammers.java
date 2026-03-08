@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.Objects;
 
-import static me.Qssaf.QBanHammers.ConfigValues.loadHammers;
+import static me.Qssaf.QBanHammers.ConfigManager.loadHammers;
 
 
 public final class QBanHammers extends JavaPlugin {
@@ -24,7 +24,7 @@ public final class QBanHammers extends JavaPlugin {
 
         // Plugin startup logic
         getServer().getPluginManager().registerEvents(new EventManager(), this);
-        Objects.requireNonNull(getCommand("qbanhammers")).setExecutor(new Commands());
+        Objects.requireNonNull(getCommand("qbanhammers")).setExecutor(new CommandManager());
         File file = new File(getInstance().getDataFolder(), "config.yml");
         if (!file.exists()) {
             getLogger().warning("config.yml not found. Restoring default config...");
@@ -42,10 +42,10 @@ public final class QBanHammers extends JavaPlugin {
             }
             saveDefaultConfig();
             reloadConfig();
-            ConfigValues.loadValues();
+            ConfigManager.loadValues();
         }
         reloadConfig();
-        ConfigValues.loadValues();
+        ConfigManager.loadValues();
         loadHammers();
 
         getLogger().info("Plugin has been enabled");

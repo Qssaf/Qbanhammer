@@ -15,10 +15,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static me.Qssaf.QBanHammers.ConfigValues.prefix;
-import static me.Qssaf.QBanHammers.ConfigValues.text;
+import static me.Qssaf.QBanHammers.ConfigManager.prefix;
+import static me.Qssaf.QBanHammers.ConfigManager.text;
 
-public class Commands implements CommandExecutor, TabExecutor {
+public class CommandManager implements CommandExecutor, TabExecutor {
 
 
 
@@ -72,8 +72,8 @@ public class Commands implements CommandExecutor, TabExecutor {
                     QBanHammers.getInstance().saveDefaultConfig();
                     QBanHammers.getInstance().reloadConfig();
                     QBanHammers.getInstance().getServer().getScheduler().runTaskLater(QBanHammers.getInstance(), () -> {
-                        ConfigValues.loadValues();
-                        ConfigValues.loadHammers();
+                        ConfigManager.loadValues();
+                        ConfigManager.loadHammers();
 
                         commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("Config-Reloaded")));
 

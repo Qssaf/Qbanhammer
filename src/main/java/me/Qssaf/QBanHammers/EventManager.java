@@ -19,7 +19,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 
-import static me.Qssaf.QBanHammers.ConfigValues.prefix;
+import static me.Qssaf.QBanHammers.ConfigManager.prefix;
 
 
 @SuppressWarnings("UnnecessaryReturnStatement")

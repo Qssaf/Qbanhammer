@@ -10,7 +10,7 @@ import java.io.File;
 import static me.Qssaf.QBanHammers.QBanHammers.getInstance;
 
 
-public class ConfigValues {
+public class ConfigManager {
 
     public static String prefix = getInstance().getConfig().getString("prefix");
     public static File configFile = new File(getInstance().getDataFolder(), "config.yml");
