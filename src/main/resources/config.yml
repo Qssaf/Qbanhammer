@@ -129,6 +129,8 @@ GameCrasher-Toggled: "&eGame Crasher option has been {status}&e."
 GameCrasher-Disabled: "&eGame Crasher is disabled from the config."
 Config-Reloaded: "&aConfiguration reloaded successfully."
 
+Logger:
+
 
 # config version, DO NOT CHANGE THIS
 ConfigVersion: 2.6

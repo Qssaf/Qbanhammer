@@ -46,7 +46,11 @@ public final class QBanHammers extends JavaPlugin {
             ConfigManager.loadValues();
         }
         File loggerFile = new File(getInstance().getDataFolder(), "logger.txt");
-        if(!file.exists()){
+
+        reloadConfig();
+        ConfigManager.loadValues();
+        loadHammers();
+        if(!loggerFile.exists()){
             try {
                 loggerFile.createNewFile();
             } catch (IOException e) {
@@ -54,10 +58,6 @@ public final class QBanHammers extends JavaPlugin {
             }
             getLogger().info("Created Logger for Qbanhammers");
         }
-        reloadConfig();
-        ConfigManager.loadValues();
-        loadHammers();
-
         getLogger().info("Plugin has been enabled");
 
 
