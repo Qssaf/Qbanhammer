@@ -5,8 +5,10 @@
 
 prefix: "&4[&c&lQBH&4] "
 # The prefix of the plugin, used in messages.
-ExecuteWithConsole: false
-# If true, the plugin will execute the hammer command with the console instead of the player.
+
+
+CommandExecutor: "player"
+# Select the command executor, choices: player, player_as_op(unsafe), console
 
 StrikeWhitelist:
   - "Player1"
@@ -20,7 +22,11 @@ TimeOutDuration: 3.0
 StrikeLightningIfNoPlayer: true
 # If true, lightning will strike even if the attacked player is not found.
 
-GameCrasher: true
+GameCrasher:
+  enabled: true
+  toggledOnStatus: "&aenabled"
+  toggledOffStatus: "&cdisabled"
+  # msg will turn to {status} placeholder when toggling
 # If true, the plugin will crash the attacked player's game client(doesn't work on bedrock players).
 
 hammers:
@@ -118,7 +124,7 @@ Whitelisted-Player: "&c{attacked} is immune to ban hammers."
 Confirmation-Message: "&eYou are about to strike {attacked} with a {hammer}. Click again to confirm."
 Confirmation-Timeout: "&cConfirmation timed out."
 ModelData-Error: "&cInvalid model data for {hammer}."
-GamerCrasher-NoPermission: "&cYou don't have permission use the game crasher."
+GameCrasher-NoPermission: "&cYou don't have permission use the game crasher."
 GameCrasher-Toggled: "&eGame Crasher option has been {status}&e."
 GameCrasher-Disabled: "&eGame Crasher is disabled from the config."
 Config-Reloaded: "&aConfiguration reloaded successfully."

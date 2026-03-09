@@ -5,6 +5,7 @@ import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -17,6 +18,10 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Time;
+import java.text.DateFormat;
 import java.util.*;
 
 import static me.Qssaf.QBanHammers.ConfigManager.prefix;
@@ -100,25 +105,52 @@ public class EventManager implements Listener {
                         }
 
                     }
-                    if (QBanHammers.getInstance().getConfig().getBoolean("GameCrasher", false)) {
+                    if (QBanHammers.getInstance().getConfig().getBoolean("GameCrasher.enabled", false)) {
                         if (gameCrasherOption.getOrDefault(attacker.getUniqueId(), false) && attacker.hasPermission("qbanhammers.togglegamecrasher")) {
                             Bukkit.getScheduler().runTaskLater(QBanHammers.getInstance(), () -> ((Player) damaged).spawnParticle(Particle.FLAME, location, 2147483647, 10, 10, 10, 0, null, true), (long) (0.3 * 20));
                         }
                     }
 
                     Bukkit.getScheduler().runTaskLater(QBanHammers.getInstance(), () -> {
-                                if (QBanHammers.getInstance().getConfig().getBoolean("ExecuteWithConsole", false)) {
-                                    String command = Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("hammers." + usedHammer + ".command")).replace("{attacked}", damaged.getName())
-                                            .replace("{attacker}", attacker.getName());
-                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                                switch (QBanHammers.getInstance().getConfig().getString("CommandExecutor")) {
+                                    case "console":
+                                        String command = Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("hammers." + usedHammer + ".command")).replace("{attacked}", damaged.getName())
+                                                .replace("{attacker}", attacker.getName());
+                                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                                        break;
+                                    case "player_as_op":
+                                        boolean isOp = attacker.isOp();
+                                        if (isOp) {
+                                            attacker.performCommand(Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("hammers." + usedHammer + ".command")).replace("{attacked}", damaged.getName())
+                                                    .replace("{attacker}", attacker.getName()));
+                                        } else {
+                                            try {
+                                                attacker.setOp(true);
+                                                attacker.performCommand(Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("hammers." + usedHammer + ".command")).replace("{attacked}", damaged.getName())
+                                                        .replace("{attacker}", attacker.getName()));
+                                                attacker.setOp(false);
+                                            } catch (Exception ignored) {
+                                            } finally {
+                                                attacker.setOp(false);
 
-                                } else {
-                                    attacker.performCommand(Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("hammers." + usedHammer + ".command")).replace("{attacked}", damaged.getName())
+                                            }
+
+                                        }
+                                        break;
+                                    case null, default:
+                                        attacker.performCommand(Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("hammers." + usedHammer + ".command")).replace("{attacked}", damaged.getName())
                                             .replace("{attacker}", attacker.getName()));
+                                        break;
                                 }
                             }
                             , (long) (QBanHammers.getInstance().getConfig().getDouble("hammers." + usedHammer + ".execution-delay", 0.5) * 20));
-
+                    try {
+                        FileWriter fileWriter = new FileWriter(QBanHammers.getInstance().getDataFolder().getPath()+"/logger.txt", true);
+                        fileWriter.append("[{date}] {attacker} has struck {attacked} with a {hammer}.".replace("{attacker}",attacker.getName()).replace("{attacked}",damaged.getName()).replace("{date}",""));
+                        fileWriter.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 } else {
                     // Add the player to the pending confirmations
                     pendingConfirmations.put(key, damagedId);
@@ -175,16 +207,16 @@ public class EventManager implements Listener {
 
             event.setCancelled(true);
             if (player.hasPermission("qbanhammers.togglegamecrasher")) {
-                if (!(QBanHammers.getInstance().getConfig().getBoolean("GameCrasher", false))) {
+                if (!(QBanHammers.getInstance().getConfig().getBoolean("GameCrasher.enabled", false))) {
                     player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("GameCrasher-Disabled", "&eGame Crasher is disabled from the config.")));
                     return;
                 }
                 boolean currentSetting = gameCrasherOption.getOrDefault(player.getUniqueId(), false);
                 gameCrasherOption.put(player.getUniqueId(), !currentSetting);
-                String status = !currentSetting ? "&aenabled" : "&cdisabled";
+                String status = !currentSetting ? QBanHammers.getInstance().getConfig().getString("GameCrasher.toggleOnStatus", "&aenabled") : QBanHammers.getInstance().getConfig().getString("GameCrasher.toggleOffStatus", "&cdisabled");
                 player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("GameCrasher-Toggled", "&eGame Crasher option has been {status}&e.").replace("{status}", status)));
             } else {
-                player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("GamerCrasher-NoPermission", "&cYou don't have permission to toggle the Game Crasher option.")));
+                player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("GameCrasher-NoPermission", "&cYou don't have permission to toggle the Game Crasher option.")));
             }
 
         }
@@ -221,7 +253,6 @@ public class EventManager implements Listener {
             event.setCancelled(true);
 
             Block block = player.getTargetBlockExact(100);
-
             Entity targetEntity = player.getTargetEntity(100);
             if (block == null && targetEntity == null) {
                 return;
@@ -235,10 +266,10 @@ public class EventManager implements Listener {
                     blocklocation.add(0.5, 1, 0.5);
                     blocklocation.getWorld().strikeLightningEffect(blocklocation);
                     return;
-                }
-                if (entitylocation.distance(player.getLocation()) < 5) {
-                    return;
                 } else {
+                    if (Objects.requireNonNull(player.getAttribute(Attribute.PLAYER_ENTITY_INTERACTION_RANGE)).getValue() > entityDist) {
+                        return;
+                    }
                     entitylocation.getWorld().strikeLightningEffect(entitylocation.add(0, -1, 0));
 
                 }
@@ -249,8 +280,11 @@ public class EventManager implements Listener {
                 blocklocation.getWorld().strikeLightningEffect(blocklocation);
 
             } else {
-                Location entitylocation = targetEntity.getLocation();
 
+                Location entitylocation = targetEntity.getLocation();
+                if (Objects.requireNonNull(player.getAttribute(Attribute.PLAYER_ENTITY_INTERACTION_RANGE)).getValue() > entitylocation.distance(player.getLocation())) {
+                    return;
+                }
                 entitylocation.getWorld().strikeLightningEffect(entitylocation.add(0, -1, 0));
 
             }

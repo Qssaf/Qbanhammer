@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 import static me.Qssaf.QBanHammers.ConfigManager.loadHammers;
@@ -16,7 +17,7 @@ public final class QBanHammers extends JavaPlugin {
     public static @NotNull QBanHammers getInstance() {
         return getPlugin(QBanHammers.class);
     }
-    private static final Float version = 2.5f;
+    private static final Float version = 2.6f;
 
 
     @Override
@@ -27,7 +28,7 @@ public final class QBanHammers extends JavaPlugin {
         Objects.requireNonNull(getCommand("qbanhammers")).setExecutor(new CommandManager());
         File file = new File(getInstance().getDataFolder(), "config.yml");
         if (!file.exists()) {
-            getLogger().warning("config.yml not found. Restoring default config...");
+            getLogger().warning("config.yml not found. Adding default config...");
             saveDefaultConfig(); // Saves the default from JAR
         }
         YamlConfiguration oldConfig = YamlConfiguration.loadConfiguration(file);
@@ -43,6 +44,15 @@ public final class QBanHammers extends JavaPlugin {
             saveDefaultConfig();
             reloadConfig();
             ConfigManager.loadValues();
+        }
+        File loggerFile = new File(getInstance().getDataFolder(), "logger.txt");
+        if(!file.exists()){
+            try {
+                loggerFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            getLogger().info("Created Logger for Qbanhammers");
         }
         reloadConfig();
         ConfigManager.loadValues();
