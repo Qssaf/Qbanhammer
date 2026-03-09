@@ -130,6 +130,9 @@ GameCrasher-Disabled: "&eGame Crasher is disabled from the config."
 Config-Reloaded: "&aConfiguration reloaded successfully."
 
 Logger:
+  noPermission: "[{date}] {player} has tried to use a {hammer} with no permission"
+  attackedEntity: "[{date}] {attacker} tried to attack a {attacked} with a {hammer}."
+  struckPlayer: "[{date}] {attacker} has struck {attacked} with a {hammer}."
 
 
 # config version, DO NOT CHANGE THIS

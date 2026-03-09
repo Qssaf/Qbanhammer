@@ -5,7 +5,10 @@ api-version: '1.21'
 load: STARTUP
 authors: [ Qssaf ]
 description: "A staff utility plugin made for punishing players and more!"
-
+softdepend:
+  - Nexo
+  - ItemsAdder
+  - LiteBans
 commands:
   qbanhammers:
     description: "This is a command"
