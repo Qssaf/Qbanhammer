@@ -4,6 +4,9 @@ main: me.Qssaf.QBanHammers.QBanHammers
 api-version: '1.21'
 load: STARTUP
 authors: [ Qssaf ]
+folia-supported: true
+prefix: "QBH"
+website: "https://qssaf.parrotstudios.dev/"
 description: "A staff utility plugin made for punishing players and more!"
 softdepend:
   - Nexo
@@ -13,31 +16,31 @@ commands:
   qbanhammers:
     description: "This is a command"
     usage: "/qbanhammers <arg>"
-    aliases: [bh, banhammers, qbh]
+    aliases: [ bh, banhammers, qbh ]
     permission: qbanhammers.use
     permission-message: "You do not have permission to use this command"
 permissions:
-    qbanhammers.admin:
-        description: "Allows the use of all Qbanhammers commands"
-        default: op
-        children:
-            - qbanhammers.reload
-            - qbanhammers.use
-            - qbanhammers.gethammer
-            - qbanhammers.togglegamecrasher
-            - qbanhammers.strikelightning
-    qbanhammers.reload:
-        description: "Allows the use of the Qbanhammers reload command"
-        default: op
-    qbanhammers.use:
-        description: "Allows the use of the Qbanhammers command"
-        default: op
-    qbanhammers.gethammer:
-        description: "Allows the use of the Qbanhammers gethammer command"
-        default: op
-    qbanhammers.togglegamecrasher:
-        description: "Allows the use of the Qbanhammers toggle game crasher option"
-        default: op
-    qbanhammers.strikelightning:
-        description: "Allows the use of lightning strikes when using hammers"
-        default: op
+  qbanhammers.admin:
+    description: "Allows the use of all Qbanhammers commands"
+    default: op
+    children:
+      - qbanhammers.reload
+      - qbanhammers.use
+      - qbanhammers.gethammer
+      - qbanhammers.togglegamecrasher
+      - qbanhammers.strikelightning
+  qbanhammers.reload:
+    description: "Allows the use of the Qbanhammers reload command"
+    default: op
+  qbanhammers.use:
+    description: "Allows the use of the Qbanhammers command"
+    default: op
+  qbanhammers.gethammer:
+    description: "Allows the use of the Qbanhammers gethammer command"
+    default: op
+  qbanhammers.togglegamecrasher:
+    description: "Allows the use of the Qbanhammers toggle game crasher option"
+    default: op
+  qbanhammers.strikelightning:
+    description: "Allows the use of lightning strikes when using hammers"
+    default: op

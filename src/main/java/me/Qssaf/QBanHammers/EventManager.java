@@ -13,6 +13,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -66,10 +68,10 @@ public class EventManager implements Listener {
             String usedHammer = match.get().getHammerName();
 
             if (!attacker.hasPermission("qbanhammers.hammers." + usedHammer)) {
-                try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(QBanHammers.getInstance().getDataFolder().getPath() + "/logger.txt", true))){
+                try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(QBanHammers.getInstance().getDataFolder().getPath() + "/logger.txt", true))) {
 
 
-                    fileWriter.write(QBanHammers.getInstance().getConfig().getString("Logger.noPermission ","[{date}] {attacker} tried to attack a {attacked} with a {hammer}.").replace("{attacker}", attacker.getName()).replace("{attacked}", damaged.getName().toLowerCase()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).replace("{hammer}", usedHammer) + "\n");
+                    fileWriter.write(QBanHammers.getInstance().getConfig().getString("Logger.noPermission ", "[{date}] {attacker} tried to attack a {attacked} with a {hammer} with no permission.").replace("{attacker}", attacker.getName()).replace("{attacked}", damaged.getName()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).replace("{hammer}", usedHammer) + "\n");
 
                 } catch (IOException e) {
                     QBanHammers.getInstance().getLogger().severe("Could not write to logger.txt: " + e.getMessage());
@@ -148,14 +150,14 @@ public class EventManager implements Listener {
                                         break;
                                     case null, default:
                                         attacker.performCommand(Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("hammers." + usedHammer + ".command")).replace("{attacked}", damaged.getName())
-                                            .replace("{attacker}", attacker.getName()));
+                                                .replace("{attacker}", attacker.getName()));
                                         break;
                                 }
                             }
                             , (long) (QBanHammers.getInstance().getConfig().getDouble("hammers." + usedHammer + ".execution-delay", 0.5) * 20));
-                    try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(QBanHammers.getInstance().getDataFolder().getPath() + "/logger.txt", true))){
+                    try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(QBanHammers.getInstance().getDataFolder().getPath() + "/logger.txt", true))) {
 
-                        fileWriter.write(QBanHammers.getInstance().getConfig().getString("Logger.struckPlayer","[{date}] {attacker} has struck {attacked} with a {hammer}.").replace("{attacker}", attacker.getName()).replace("{attacked}", damaged.getName().toLowerCase()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).replace("{hammer}", usedHammer) + "\n");
+                        fileWriter.write(QBanHammers.getInstance().getConfig().getString("Logger.struckPlayer", "[{date}] {attacker} has struck {attacked} with a {hammer}.").replace("{attacker}", attacker.getName()).replace("{attacked}", damaged.getName()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).replace("{hammer}", usedHammer) + "\n");
 
                     } catch (IOException e) {
                         QBanHammers.getInstance().getLogger().severe("Could not write to logger.txt: " + e.getMessage());
@@ -176,10 +178,10 @@ public class EventManager implements Listener {
             } else {
 
                 event.setCancelled(true);
-                try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(QBanHammers.getInstance().getDataFolder().getPath() + "/logger.txt", true))){
+                try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(QBanHammers.getInstance().getDataFolder().getPath() + "/logger.txt", true))) {
 
 
-                    fileWriter.write(QBanHammers.getInstance().getConfig().getString("Logger.attackedEntity","[{date}] {attacker} tried to attack a {attacked} with a {hammer}.").replace("{attacker}", attacker.getName()).replace("{attacked}", damaged.getName().toLowerCase()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).replace("{hammer}", usedHammer) + "\n");
+                    fileWriter.write(QBanHammers.getInstance().getConfig().getString("Logger.attackedEntity", "[{date}] {attacker} tried to attack a {attacked} with a {hammer}.").replace("{attacker}", attacker.getName()).replace("{attacked}", damaged.getName().toLowerCase()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).replace("{hammer}", usedHammer) + "\n");
 
                 } catch (IOException e) {
                     QBanHammers.getInstance().getLogger().severe("Could not write to logger.txt: " + e.getMessage());
@@ -187,7 +189,7 @@ public class EventManager implements Listener {
                 attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cYou can't ban a " + damaged.getName().toLowerCase() + "."));
             }
         }
-        Bukkit.getScheduler().runTaskLater(QBanHammers.getInstance(), () -> attackedRecently.remove(event.getPlayer().getUniqueId()),1L);
+        Bukkit.getScheduler().runTaskLater(QBanHammers.getInstance(), () -> attackedRecently.remove(event.getPlayer().getUniqueId()), 1L);
 
 
     }
@@ -200,7 +202,7 @@ public class EventManager implements Listener {
         if (!player.hasPermission("qbanhammers.togglegamecrasher")) {
             return;
         }
-        if(attackedRecently.remove(event.getPlayer().getUniqueId())){
+        if (attackedRecently.remove(event.getPlayer().getUniqueId())) {
             return;
         }
         if (event.getAction() != Action.RIGHT_CLICK_AIR &&
@@ -224,14 +226,14 @@ public class EventManager implements Listener {
 
             event.setCancelled(true);
 
-                if (!(QBanHammers.getInstance().getConfig().getBoolean("GameCrasher.enabled", false))) {
-                    player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("GameCrasher-Disabled", "&eGame Crasher is disabled from the config.")));
-                    return;
-                }
-                boolean currentSetting = gameCrasherOption.getOrDefault(player.getUniqueId(), false);
-                gameCrasherOption.put(player.getUniqueId(), !currentSetting);
-                String status = !currentSetting ? QBanHammers.getInstance().getConfig().getString("GameCrasher.toggleOnStatus", "&aenabled") : QBanHammers.getInstance().getConfig().getString("GameCrasher.toggleOffStatus", "&cdisabled");
-                player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("GameCrasher-Toggled", "&eGame Crasher option has been {status}&e.").replace("{status}", status)));
+            if (!(QBanHammers.getInstance().getConfig().getBoolean("GameCrasher.enabled", false))) {
+                player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("GameCrasher-Disabled", "&eGame Crasher is disabled from the config.")));
+                return;
+            }
+            boolean currentSetting = gameCrasherOption.getOrDefault(player.getUniqueId(), false);
+            gameCrasherOption.put(player.getUniqueId(), !currentSetting);
+            String status = !currentSetting ? QBanHammers.getInstance().getConfig().getString("GameCrasher.toggleOnStatus", "&aenabled") : QBanHammers.getInstance().getConfig().getString("GameCrasher.toggleOffStatus", "&cdisabled");
+            player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("GameCrasher-Toggled", "&eGame Crasher option has been {status}&e.").replace("{status}", status)));
 
 
         }
@@ -295,7 +297,6 @@ public class EventManager implements Listener {
                 blocklocation.getWorld().strikeLightningEffect(blocklocation);
 
             } else {
-
                 Location entitylocation = targetEntity.getLocation();
                 if (Objects.requireNonNull(player.getAttribute(Attribute.PLAYER_ENTITY_INTERACTION_RANGE)).getValue() > entitylocation.distance(player.getLocation())) {
                     return;
@@ -303,6 +304,34 @@ public class EventManager implements Listener {
                 entitylocation.getWorld().strikeLightningEffect(entitylocation.add(0, -1, 0));
 
             }
+
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        if (!event.isLeftClick()) {
+            return;
+        }
+        if (!player.hasMetadata("Hammer Menu")) {
+            return;
+        }
+        event.setCancelled(true);
+        if (event.getCurrentItem() == null || event.getCurrentItem().getType().isAir()) {
+            return;
+        }
+        player.getInventory().addItem(event.getCurrentItem());
+
+        player.sendMessage(ConfigManager.text("&aGiven you a hammer "));
+    }
+
+    @EventHandler
+    public void onInventoryLeave(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
+
+        if (player.hasMetadata("Hammer Menu")) {
+            player.removeMetadata("Hammer Menu", QBanHammers.getInstance());
 
         }
     }

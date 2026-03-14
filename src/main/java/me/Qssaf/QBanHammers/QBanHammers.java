@@ -17,8 +17,8 @@ public final class QBanHammers extends JavaPlugin {
     public static @NotNull QBanHammers getInstance() {
         return getPlugin(QBanHammers.class);
     }
-    private static final Float version = 2.6f;
 
+    private static final Float version = 2.6f;
 
     @Override
     public void onEnable() {
@@ -31,6 +31,7 @@ public final class QBanHammers extends JavaPlugin {
             getLogger().warning("config.yml not found. Adding default config...");
             saveDefaultConfig(); // Saves the default from JAR
         }
+
         YamlConfiguration oldConfig = YamlConfiguration.loadConfiguration(file);
         if (oldConfig.getDouble("ConfigVersion") < version) {
             getLogger().warning("Outdated config.yml detected. Backing up and creating new config...");
@@ -50,7 +51,7 @@ public final class QBanHammers extends JavaPlugin {
         reloadConfig();
         ConfigManager.loadValues();
         loadHammers();
-        if(!loggerFile.exists()){
+        if (!loggerFile.exists()) {
             try {
                 loggerFile.createNewFile();
             } catch (IOException e) {

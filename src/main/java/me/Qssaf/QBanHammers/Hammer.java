@@ -17,6 +17,7 @@ import org.bukkit.plugin.PluginManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static me.Qssaf.QBanHammers.ConfigManager.prefix;
 import static me.Qssaf.QBanHammers.ConfigManager.text;
@@ -29,12 +30,18 @@ public class Hammer {
     private String hammerName;
     private NamespacedKey hammerKey;
 
+    public Hammer(Hammer hammer) {
+        this.hammerItem = hammer.getHammerItem().clone();
+        this.hammerName = hammer.getHammerName();
+        this.hammerKey = hammer.getHammerKey();
+
+    }
 
     public Hammer(String HammerName) {
         QBanHammers plugin = QBanHammers.getInstance();
         if (!plugin.getConfig().contains("hammers." + HammerName)) {
             plugin.getLogger().severe("Unable to load Hammer: " + HammerName);
-            plugin.getLogger().severe("Reason: Couldn't find {hammer} in the config".replace("{hammer}",HammerName));
+            plugin.getLogger().severe("Reason: Couldn't find {hammer} in the config".replace("{hammer}", HammerName));
             return;
         }
         this.hammerName = HammerName;
@@ -110,6 +117,16 @@ public class Hammer {
 
     public static void clearHammerList() {
         hammerList.clear();
+    }
+
+    public static Hammer getHammer(String hammerName) {
+        Optional<Hammer> hammer = Hammer.getHammerList().stream().filter(option -> option.getHammerName().equalsIgnoreCase(hammerName)).findFirst();
+        return hammer.orElse(null);
+    }
+
+    public static Hammer getHammer(ItemStack hammerItem) {
+        Optional<Hammer> hammer = Hammer.getHammerList().stream().filter(option -> hammerItem.getItemMeta().getPersistentDataContainer().has(option.getHammerKey())).findFirst();
+        return hammer.orElse(null);
     }
 
     public String getHammerName() {

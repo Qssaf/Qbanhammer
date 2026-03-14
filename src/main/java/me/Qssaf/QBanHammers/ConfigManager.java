@@ -35,13 +35,13 @@ public class ConfigManager {
             for (String hammerName : hammersSection.getKeys(false).stream().toList()) {
                 new Hammer(hammerName);
             }
-
+            HammersGUI.createGUI();
 
         } else getInstance().getLogger().severe("No hammers exist in the config");
 
     }
 
 
-    }
+}
 
 

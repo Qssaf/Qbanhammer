@@ -6,8 +6,8 @@
         <entry key="Bukkit plugin.yml">
           <value>
             <SchemaInfo>
-              <option name="name" value="Bukkit plugin.yml" />
-              <option name="relativePathToSchema" value="https://www.schemastore.org/bukkit-plugin.json" />
+              <option name="name" value="Paper paper-plugin.yml" />
+              <option name="relativePathToSchema" value="https://www.schemastore.org/paper-plugin.json" />
               <option name="applicationDefined" value="true" />
               <option name="patterns">
                 <list>

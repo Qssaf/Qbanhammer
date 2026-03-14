@@ -21,7 +21,6 @@ import static me.Qssaf.QBanHammers.ConfigManager.text;
 public class CommandManager implements CommandExecutor, TabExecutor {
 
 
-
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
 
@@ -31,7 +30,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
 
         }
         if (strings.length == 0) {
-            commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cPlease specify a subcommand!"));
+            HammersGUI.getGui().open(player);
             return true;
         }
         if (strings.length > 2) {
@@ -83,8 +82,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
 
                     return true;
                 }
-            }
-            else {
+            } else {
                 commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + QBanHammers.getInstance().getConfig().getString("Invalid-Subcommand")));
                 return true;
             }
@@ -110,13 +108,12 @@ public class CommandManager implements CommandExecutor, TabExecutor {
                     .toList();
 
 
-
         } else {
             return List.of();
 
         }
 
 
-
     }
+
 }

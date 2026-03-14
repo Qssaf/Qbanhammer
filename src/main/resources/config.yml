@@ -22,6 +22,12 @@ TimeOutDuration: 3.0
 StrikeLightningIfNoPlayer: true
 # If true, lightning will strike even if the attacked player is not found.
 
+Menu:
+  title: "The Hammers Menu"
+  additionalLore:
+    - "From the Hammers Menu"
+    - "&aClick to get it!"
+  rows: 3 # Max is 6 rows
 GameCrasher:
   enabled: true
   toggledOnStatus: "&aenabled"
@@ -42,6 +48,7 @@ hammers:
     command: "kick {attacked} You have been kicked by the {attacker}"
     lightning-strike: true
     fling: true
+    slot: 1
     sound:
       enabled: true
       name: "ENTITY_WITHER_SPAWN"
@@ -62,6 +69,7 @@ hammers:
     lightning-strike: true
     execution-delay: 0.5
     fling: true
+    slot: 2
     sound:
       enabled: true
       sound-name: "ENTITY_WITHER_SPAWN"
@@ -82,6 +90,7 @@ hammers:
     command: "ban {attacked} 30d cheating"
     execution-delay: 0.5
     fling: true
+    slot: 3
     sound:
       enabled: true
       sound-name: "ENTITY_WITHER_SPAWN"
@@ -102,11 +111,12 @@ hammers:
     lightning-strike: true
     execution-delay: 0.5
     fling: true
+    slot: 4
     sound:
-        enabled: true
-        sound-name: "ENTITY_WITHER_SPAWN"
-        volume: 1.0
-        pitch: 1.0
+      enabled: true
+      sound-name: "ENTITY_WITHER_SPAWN"
+      volume: 1.0
+      pitch: 1.0
     modeldata: 0
     strike-msg: "&c{attacked} has been struck by the Ban Hammer."
 

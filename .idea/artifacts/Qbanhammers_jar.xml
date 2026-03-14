@@ -2,6 +2,7 @@
   <artifact type="jar" name="Qbanhammers:jar">
     <output-path>$PROJECT_DIR$/../../../Mc plugin testing shi</output-path>
     <root id="archive" name="Qbanhammers.jar">
+      <element id="library" level="project" name="Maven: dev.triumphteam:triumph-gui:3.2.0-SNAPSHOT" />
       <element id="module-output" name="Qbanhammers" />
     </root>
   </artifact>
