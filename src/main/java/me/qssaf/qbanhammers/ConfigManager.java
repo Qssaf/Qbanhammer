@@ -1,4 +1,4 @@
-package me.Qssaf.QBanHammers;
+package me.qssaf.qbanhammers;
 
 
 import net.kyori.adventure.text.Component;
@@ -7,10 +7,10 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;
 
-import static me.Qssaf.QBanHammers.QBanHammers.getInstance;
+import static me.qssaf.qbanhammers.QBanHammers.getInstance;
 
 
-public class ConfigManager {
+public final class ConfigManager {
 
     public static String prefix = getInstance().getConfig().getString("prefix");
     public static File configFile = new File(getInstance().getDataFolder(), "config.yml");

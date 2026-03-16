@@ -1,6 +1,6 @@
 name: QBanHammers
 version: '2.6'
-main: me.Qssaf.QBanHammers.QBanHammers
+main: me.Qssaf.qbanhammers.QBanHammers
 api-version: '1.21'
 load: STARTUP
 authors: [ Qssaf ]

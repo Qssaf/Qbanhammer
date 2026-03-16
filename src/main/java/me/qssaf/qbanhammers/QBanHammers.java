@@ -1,4 +1,4 @@
-package me.Qssaf.QBanHammers;
+package me.qssaf.qbanhammers;
 
 
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-import static me.Qssaf.QBanHammers.ConfigManager.loadHammers;
+import static me.qssaf.qbanhammers.ConfigManager.loadHammers;
 
 
 public final class QBanHammers extends JavaPlugin {
@@ -31,7 +31,7 @@ public final class QBanHammers extends JavaPlugin {
             getLogger().warning("config.yml not found. Adding default config...");
             saveDefaultConfig(); // Saves the default from JAR
         }
-
+        FoliaManager.init(this);
         YamlConfiguration oldConfig = YamlConfiguration.loadConfiguration(file);
         if (oldConfig.getDouble("ConfigVersion") < version) {
             getLogger().warning("Outdated config.yml detected. Backing up and creating new config...");
@@ -59,6 +59,8 @@ public final class QBanHammers extends JavaPlugin {
             }
             getLogger().info("Created Logger for Qbanhammers");
         }
+
+
         getLogger().info("Plugin has been enabled");
 
 

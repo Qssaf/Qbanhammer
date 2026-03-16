@@ -1,4 +1,4 @@
-package me.Qssaf.QBanHammers;
+package me.qssaf.qbanhammers;
 
 import com.nexomc.nexo.api.NexoItems;
 import com.nexomc.nexo.items.ItemBuilder;
@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static me.Qssaf.QBanHammers.ConfigManager.prefix;
-import static me.Qssaf.QBanHammers.ConfigManager.text;
+import static me.qssaf.qbanhammers.ConfigManager.prefix;
+import static me.qssaf.qbanhammers.ConfigManager.text;
 
 public class Hammer {
     private static final List<Hammer> hammerList = new ArrayList<>();
@@ -31,7 +31,7 @@ public class Hammer {
     private NamespacedKey hammerKey;
 
     public Hammer(Hammer hammer) {
-        this.hammerItem = hammer.getHammerItem().clone();
+        this.hammerItem = new ItemStack(hammer.getHammerItem());
         this.hammerName = hammer.getHammerName();
         this.hammerKey = hammer.getHammerKey();
 

@@ -1,4 +1,4 @@
-package me.Qssaf.QBanHammers;
+package me.qssaf.qbanhammers;
 
 
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
@@ -27,11 +27,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static me.Qssaf.QBanHammers.ConfigManager.prefix;
+import static me.qssaf.qbanhammers.ConfigManager.prefix;
 
 
 @SuppressWarnings("UnnecessaryReturnStatement")
-public class EventManager implements Listener {
+public final class EventManager implements Listener {
     private final Set<UUID> attackedRecently = new HashSet<>();
 
     private final Map<NamespacedKey, UUID> pendingConfirmations = new HashMap<>();
