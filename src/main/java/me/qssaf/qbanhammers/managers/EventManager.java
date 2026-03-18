@@ -1,7 +1,9 @@
-package me.qssaf.qbanhammers;
+package me.qssaf.qbanhammers.managers;
 
 
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
+import me.qssaf.qbanhammers.Hammer;
+import me.qssaf.qbanhammers.QBanHammers;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.*;
@@ -20,14 +22,11 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static me.qssaf.qbanhammers.ConfigManager.prefix;
+import static me.qssaf.qbanhammers.managers.ConfigManager.prefix;
 
 
 @SuppressWarnings("UnnecessaryReturnStatement")
@@ -35,6 +34,7 @@ public final class EventManager implements Listener {
     private final Set<UUID> attackedRecently = new HashSet<>();
 
     private final Map<NamespacedKey, UUID> pendingConfirmations = new HashMap<>();
+
     private final Map<UUID, Boolean> gameCrasherOption = new HashMap<>();
 
     private Component replacePlaceholders(String messageTemplate, Player attacker, Entity damaged) {
@@ -68,14 +68,10 @@ public final class EventManager implements Listener {
             String usedHammer = match.get().getHammerName();
 
             if (!attacker.hasPermission("qbanhammers.hammers." + usedHammer)) {
-                try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(QBanHammers.getInstance().getDataFolder().getPath() + "/logger.txt", true))) {
+
+                LoggerManager.write(QBanHammers.getInstance().getConfig().getString("Logger.noPermission ", "[{date}] {attacker} tried to attack a {attacked} with a {hammer} with no permission.").replace("{attacker}", attacker.getName()).replace("{attacked}", damaged.getName()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).replace("{hammer}", usedHammer));
 
 
-                    fileWriter.write(QBanHammers.getInstance().getConfig().getString("Logger.noPermission ", "[{date}] {attacker} tried to attack a {attacked} with a {hammer} with no permission.").replace("{attacker}", attacker.getName()).replace("{attacked}", damaged.getName()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).replace("{hammer}", usedHammer) + "\n");
-
-                } catch (IOException e) {
-                    QBanHammers.getInstance().getLogger().severe("Could not write to logger.txt: " + e.getMessage());
-                }
                 attacker.getInventory().setItemInMainHand(ItemStack.of(Material.AIR));
                 attacker.sendMessage(replacePlaceholders(Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("Hammer-NoPermission")), attacker, damaged));
                 event.setCancelled(true);
@@ -155,13 +151,8 @@ public final class EventManager implements Listener {
                                 }
                             }
                             , (long) (QBanHammers.getInstance().getConfig().getDouble("hammers." + usedHammer + ".execution-delay", 0.5) * 20));
-                    try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(QBanHammers.getInstance().getDataFolder().getPath() + "/logger.txt", true))) {
+                    LoggerManager.write(QBanHammers.getInstance().getConfig().getString("Logger.struckPlayer", "[{date}] {attacker} has struck {attacked} with a {hammer}.").replace("{attacker}", attacker.getName()).replace("{attacked}", damaged.getName()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).replace("{hammer}", usedHammer));
 
-                        fileWriter.write(QBanHammers.getInstance().getConfig().getString("Logger.struckPlayer", "[{date}] {attacker} has struck {attacked} with a {hammer}.").replace("{attacker}", attacker.getName()).replace("{attacked}", damaged.getName()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).replace("{hammer}", usedHammer) + "\n");
-
-                    } catch (IOException e) {
-                        QBanHammers.getInstance().getLogger().severe("Could not write to logger.txt: " + e.getMessage());
-                    }
                 } else {
                     // Add the player to the pending confirmations
                     pendingConfirmations.put(key, damagedId);
@@ -178,14 +169,11 @@ public final class EventManager implements Listener {
             } else {
 
                 event.setCancelled(true);
-                try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(QBanHammers.getInstance().getDataFolder().getPath() + "/logger.txt", true))) {
 
 
-                    fileWriter.write(QBanHammers.getInstance().getConfig().getString("Logger.attackedEntity", "[{date}] {attacker} tried to attack a {attacked} with a {hammer}.").replace("{attacker}", attacker.getName()).replace("{attacked}", damaged.getName().toLowerCase()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).replace("{hammer}", usedHammer) + "\n");
+                LoggerManager.write(QBanHammers.getInstance().getConfig().getString("Logger.attackedEntity", "[{date}] {attacker} tried to attack a {attacked} with a {hammer}.").replace("{attacker}", attacker.getName()).replace("{attacked}", damaged.getName().toLowerCase()).replace("{date}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).replace("{hammer}", usedHammer));
 
-                } catch (IOException e) {
-                    QBanHammers.getInstance().getLogger().severe("Could not write to logger.txt: " + e.getMessage());
-                }
+
                 attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cYou can't ban a " + damaged.getName().toLowerCase() + "."));
             }
         }

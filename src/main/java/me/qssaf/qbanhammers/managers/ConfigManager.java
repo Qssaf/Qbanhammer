@@ -1,6 +1,8 @@
-package me.qssaf.qbanhammers;
+package me.qssaf.qbanhammers.managers;
 
 
+import me.qssaf.qbanhammers.Hammer;
+import me.qssaf.qbanhammers.HammersGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -11,6 +13,10 @@ import static me.qssaf.qbanhammers.QBanHammers.getInstance;
 
 
 public final class ConfigManager {
+
+    private ConfigManager() {
+
+    }
 
     public static String prefix = getInstance().getConfig().getString("prefix");
     public static File configFile = new File(getInstance().getDataFolder(), "config.yml");

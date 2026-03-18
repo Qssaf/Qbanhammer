@@ -1,5 +1,6 @@
-package me.qssaf.qbanhammers;
+package me.qssaf.qbanhammers.managers;
 
+import me.qssaf.qbanhammers.QBanHammers;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -7,16 +8,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * This is a manager for all methods and functions related to task schedulers, adding Folia support and removing the need keep using "try catch" statements to use the write scheduler.
  */
-public final class FoliaManager {
+public final class SchedulerManager {
 
     private static final boolean isFolia;
-    private static JavaPlugin plugin;
+    private static final JavaPlugin plugin = QBanHammers.getInstance();
 
     static {
+
         isFolia = checkIfHasFoliaSchedulers();
     }
 
-    private FoliaManager() {
+    private SchedulerManager() {
     }
 
     private static boolean checkIfHasFoliaSchedulers() {
@@ -33,13 +35,7 @@ public final class FoliaManager {
     }
 
     private static JavaPlugin getPlugin() {
-        if (plugin == null) throw new IllegalStateException("FoliaManager is not initialized!");
         return plugin;
-    }
-
-    public static void init(JavaPlugin plugin) {
-        FoliaManager.plugin = plugin;
-
     }
 
 

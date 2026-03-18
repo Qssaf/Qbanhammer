@@ -1,15 +1,18 @@
 package me.qssaf.qbanhammers;
 
 
+import me.qssaf.qbanhammers.managers.CommandManager;
+import me.qssaf.qbanhammers.managers.ConfigManager;
+import me.qssaf.qbanhammers.managers.EventManager;
+import me.qssaf.qbanhammers.managers.LoggerManager;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
 
-import static me.qssaf.qbanhammers.ConfigManager.loadHammers;
+import static me.qssaf.qbanhammers.managers.ConfigManager.loadHammers;
 
 
 public final class QBanHammers extends JavaPlugin {
@@ -31,7 +34,7 @@ public final class QBanHammers extends JavaPlugin {
             getLogger().warning("config.yml not found. Adding default config...");
             saveDefaultConfig(); // Saves the default from JAR
         }
-        FoliaManager.init(this);
+
         YamlConfiguration oldConfig = YamlConfiguration.loadConfiguration(file);
         if (oldConfig.getDouble("ConfigVersion") < version) {
             getLogger().warning("Outdated config.yml detected. Backing up and creating new config...");
@@ -46,20 +49,12 @@ public final class QBanHammers extends JavaPlugin {
             reloadConfig();
             ConfigManager.loadValues();
         }
-        File loggerFile = new File(getInstance().getDataFolder(), "logger.txt");
+
 
         reloadConfig();
         ConfigManager.loadValues();
         loadHammers();
-        if (!loggerFile.exists()) {
-            try {
-                loggerFile.createNewFile();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            getLogger().info("Created Logger for Qbanhammers");
-        }
-
+        LoggerManager.createLogFile();
 
         getLogger().info("Plugin has been enabled");
 

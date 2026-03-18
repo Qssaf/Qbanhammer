@@ -1,5 +1,8 @@
-package me.qssaf.qbanhammers;
+package me.qssaf.qbanhammers.managers;
 
+import me.qssaf.qbanhammers.Hammer;
+import me.qssaf.qbanhammers.HammersGUI;
+import me.qssaf.qbanhammers.QBanHammers;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,8 +18,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static me.qssaf.qbanhammers.ConfigManager.prefix;
-import static me.qssaf.qbanhammers.ConfigManager.text;
+import static me.qssaf.qbanhammers.managers.ConfigManager.prefix;
+import static me.qssaf.qbanhammers.managers.ConfigManager.text;
 
 public final class CommandManager implements CommandExecutor, TabExecutor {
 

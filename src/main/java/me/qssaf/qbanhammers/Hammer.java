@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static me.qssaf.qbanhammers.ConfigManager.prefix;
-import static me.qssaf.qbanhammers.ConfigManager.text;
+import static me.qssaf.qbanhammers.managers.ConfigManager.prefix;
+import static me.qssaf.qbanhammers.managers.ConfigManager.text;
 
 public class Hammer {
     private static final List<Hammer> hammerList = new ArrayList<>();
