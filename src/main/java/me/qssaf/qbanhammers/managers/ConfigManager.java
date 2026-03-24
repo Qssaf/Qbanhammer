@@ -2,7 +2,6 @@ package me.qssaf.qbanhammers.managers;
 
 
 import me.qssaf.qbanhammers.Hammer;
-import me.qssaf.qbanhammers.HammersGUI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -41,7 +40,7 @@ public final class ConfigManager {
             for (String hammerName : hammersSection.getKeys(false).stream().toList()) {
                 new Hammer(hammerName);
             }
-            HammersGUI.createGUI();
+
 
         } else getInstance().getLogger().severe("No hammers exist in the config");
 

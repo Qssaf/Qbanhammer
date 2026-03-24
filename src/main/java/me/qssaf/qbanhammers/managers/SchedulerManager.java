@@ -3,6 +3,7 @@ package me.qssaf.qbanhammers.managers;
 import me.qssaf.qbanhammers.QBanHammers;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -87,7 +88,7 @@ public final class SchedulerManager {
         }
     }
 
-    public static void runAtEntity(org.bukkit.entity.Entity entity, Runnable task) {
+    public static void runAtEntity(Entity entity, Runnable task) {
 
         if (isFolia) {
             entity.getScheduler().execute(getPlugin(), task, null, 1L);
@@ -97,7 +98,7 @@ public final class SchedulerManager {
         }
     }
 
-    public static void runAtEntityLater(org.bukkit.entity.Entity entity, Runnable task, long delay) {
+    public static void runAtEntityLater(Entity entity, Runnable task, long delay) {
 
         if (isFolia) {
             entity.getScheduler().runDelayed(getPlugin(), (scheduledTask) -> task.run(), null, delay);
@@ -106,7 +107,7 @@ public final class SchedulerManager {
         }
     }
 
-    public static void runAtEntityTimer(org.bukkit.entity.Entity entity, Runnable task, long delay, long period) {
+    public static void runAtEntityTimer(Entity entity, Runnable task, long delay, long period) {
 
         if (isFolia) {
             entity.getScheduler().runAtFixedRate(getPlugin(), (scheduledTask) -> task.run(), null, delay, period);

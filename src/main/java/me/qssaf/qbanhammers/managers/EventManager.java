@@ -102,24 +102,31 @@ public final class EventManager implements Listener {
                         String soundName = QBanHammers.getInstance().getConfig().getString("hammers." + usedHammer + ".sound.name", "ENTITY_LIGHTNING_BOLT_THUNDER");
                         float volume = (float) QBanHammers.getInstance().getConfig().getDouble("hammers." + usedHammer + ".sound.volume", 1.0);
                         float pitch = (float) QBanHammers.getInstance().getConfig().getDouble("hammers." + usedHammer + ".sound.pitch", 1.0);
-                        Sound sound = Sound.valueOf(soundName.toUpperCase());
+
+                        Sound sound = Registry.SOUNDS.get(NamespacedKey.minecraft(soundName.toLowerCase()));
+                        if (sound != null) {
+                            for (Player player : Bukkit.getOnlinePlayers()) {
+
+                                player.playSound(player, sound, volume, pitch);
 
 
-                        for (Player player : Bukkit.getOnlinePlayers()) {
-                            player.playSound(player, sound, volume, pitch);
-
-
+                            }
                         }
+
 
                     }
                     if (QBanHammers.getInstance().getConfig().getBoolean("GameCrasher.enabled", false)) {
                         if (gameCrasherOption.getOrDefault(attacker.getUniqueId(), false) && attacker.hasPermission("qbanhammers.togglegamecrasher")) {
-                            Bukkit.getScheduler().runTaskLater(QBanHammers.getInstance(), () -> ((Player) damaged).spawnParticle(Particle.FLAME, location, 2147483647, 10, 10, 10, 0, null, true), (long) (0.3 * 20));
+                            SchedulerManager.runLater(() -> ((Player) damaged).spawnParticle(Particle.FLAME, location, 2147483647, 10, 10, 10, 0, null, true), (long) (0.3 * 20));
                         }
                     }
 
-                    Bukkit.getScheduler().runTaskLater(QBanHammers.getInstance(), () -> {
+                    SchedulerManager.runLater(()
+                                    -> {
                                 switch (QBanHammers.getInstance().getConfig().getString("CommandExecutor")) {
+                                    case "player":
+                                        attacker.performCommand(Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("hammers." + usedHammer + ".command")).replace("{attacked}", damaged.getName())
+                                                .replace("{attacker}", attacker.getName()));
                                     case "console":
                                         String command = Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("hammers." + usedHammer + ".command")).replace("{attacked}", damaged.getName())
                                                 .replace("{attacker}", attacker.getName());
@@ -157,7 +164,7 @@ public final class EventManager implements Listener {
                     // Add the player to the pending confirmations
                     pendingConfirmations.put(key, damagedId);
                     attacker.sendMessage(replacePlaceholders(Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("Confirmation-Message")).replace("{hammer}", usedHammer), attacker, damaged));
-                    Bukkit.getScheduler().runTaskLater(QBanHammers.getInstance(), () -> {
+                    SchedulerManager.runLater(() -> {
                         if (pendingConfirmations.containsKey(key) && pendingConfirmations.get(key).equals(damagedId)) {
                             pendingConfirmations.remove(key);
                             attacker.sendMessage(replacePlaceholders(Objects.requireNonNull(QBanHammers.getInstance().getConfig().getString("Confirmation-Timeout")), attacker, damaged));
@@ -177,7 +184,7 @@ public final class EventManager implements Listener {
                 attacker.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cYou can't ban a " + damaged.getName().toLowerCase() + "."));
             }
         }
-        Bukkit.getScheduler().runTaskLater(QBanHammers.getInstance(), () -> attackedRecently.remove(event.getPlayer().getUniqueId()), 1L);
+        SchedulerManager.runLater(() -> attackedRecently.remove(event.getPlayer().getUniqueId()), 1L);
 
 
     }
@@ -272,7 +279,7 @@ public final class EventManager implements Listener {
                     blocklocation.getWorld().strikeLightningEffect(blocklocation);
                     return;
                 } else {
-                    if (Objects.requireNonNull(player.getAttribute(Attribute.PLAYER_ENTITY_INTERACTION_RANGE)).getValue() > entityDist) {
+                    if (Objects.requireNonNull(player.getAttribute(Attribute.ENTITY_INTERACTION_RANGE)).getValue() > entityDist) {
                         return;
                     }
                     entitylocation.getWorld().strikeLightningEffect(entitylocation.add(0, -1, 0));
@@ -286,7 +293,7 @@ public final class EventManager implements Listener {
 
             } else {
                 Location entitylocation = targetEntity.getLocation();
-                if (Objects.requireNonNull(player.getAttribute(Attribute.PLAYER_ENTITY_INTERACTION_RANGE)).getValue() > entitylocation.distance(player.getLocation())) {
+                if (Objects.requireNonNull(player.getAttribute(Attribute.ENTITY_INTERACTION_RANGE)).getValue() > entitylocation.distance(player.getLocation())) {
                     return;
                 }
                 entitylocation.getWorld().strikeLightningEffect(entitylocation.add(0, -1, 0));

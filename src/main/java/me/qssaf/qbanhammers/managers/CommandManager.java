@@ -1,7 +1,6 @@
 package me.qssaf.qbanhammers.managers;
 
 import me.qssaf.qbanhammers.Hammer;
-import me.qssaf.qbanhammers.HammersGUI;
 import me.qssaf.qbanhammers.QBanHammers;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.Command;
@@ -11,6 +10,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +25,7 @@ public final class CommandManager implements CommandExecutor, TabExecutor {
 
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NonNull [] strings) {
 
         if (!(commandSender instanceof Player player)) {
             commandSender.sendMessage(text(prefix + QBanHammers.getInstance().getConfig().getString("Console-Gethammer")));
@@ -33,7 +33,7 @@ public final class CommandManager implements CommandExecutor, TabExecutor {
 
         }
         if (strings.length == 0) {
-            HammersGUI.getGui().open(player);
+            commandSender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(prefix + "&cPlease specify a subcommand!"));
             return true;
         }
         if (strings.length > 2) {
@@ -96,7 +96,7 @@ public final class CommandManager implements CommandExecutor, TabExecutor {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NonNull [] strings) {
         int length = strings.length;
 
         if (length == 1) {

@@ -21,6 +21,11 @@ public final class QBanHammers extends JavaPlugin {
         return getPlugin(QBanHammers.class);
     }
 
+    public static @NotNull String getVersion() {
+        return QBanHammers.getInstance().getServer().getMinecraftVersion();
+    }
+
+
     private static final Float version = 2.6f;
 
     @Override
